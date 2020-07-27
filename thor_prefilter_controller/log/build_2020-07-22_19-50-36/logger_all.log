@@ -1,0 +1,109 @@
+[0.617s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build', '--parallel-workers', '6', '--continue-on-error']
+[0.617s] DEBUG:colcon:Parsed command line arguments: Namespace(ament_cmake_args=None, base_paths=['.'], build_base='build', catkin_cmake_args=None, catkin_skip_building_tests=False, cmake_args=None, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, cmake_target=None, cmake_target_skip_unavailable=False, continue_on_error=True, event_handlers=None, executor='parallel', ignore_user_meta=False, install_base='install', log_base=None, log_level=None, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x7f70787cfd30>>, merge_install=False, metas=['./colcon.meta'], packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_end=None, packages_ignore=None, packages_ignore_regex=None, packages_select=None, packages_select_build_failed=False, packages_select_by_dep=None, packages_select_regex=None, packages_select_test_failures=False, packages_skip=None, packages_skip_build_finished=False, packages_skip_by_dep=None, packages_skip_regex=None, packages_skip_test_passed=False, packages_skip_up_to=None, packages_start=None, packages_up_to=None, packages_up_to_regex=None, parallel_workers=6, paths=None, symlink_install=False, test_result_base=None, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x7f70787cfd30>, verb_name='build', verb_parser=<colcon_defaults.argument_parser.defaults.DefaultArgumentsDecorator object at 0x7f70787df128>)
+[0.665s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.666s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.666s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.666s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.666s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.667s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.667s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/wsl/ctrl_ws/src/thor_prefilter_controller'
+[0.667s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.667s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.668s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.668s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.668s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.668s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.668s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.668s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.668s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.705s] DEBUG:colcon.colcon_core.package_identification:Package '.' with type 'ros.catkin' and name 'thor_prefilter_controller'
+[0.705s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.706s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.706s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.706s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.706s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.719s] Level 5:colcon.colcon_core.verb:set package 'thor_prefilter_controller' build argument 'cmake_args' from command line to 'None'
+[0.719s] Level 5:colcon.colcon_core.verb:set package 'thor_prefilter_controller' build argument 'cmake_target' from command line to 'None'
+[0.719s] Level 5:colcon.colcon_core.verb:set package 'thor_prefilter_controller' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.720s] Level 5:colcon.colcon_core.verb:set package 'thor_prefilter_controller' build argument 'cmake_clean_cache' from command line to 'False'
+[0.720s] Level 5:colcon.colcon_core.verb:set package 'thor_prefilter_controller' build argument 'cmake_clean_first' from command line to 'False'
+[0.720s] Level 5:colcon.colcon_core.verb:set package 'thor_prefilter_controller' build argument 'cmake_force_configure' from command line to 'False'
+[0.720s] Level 5:colcon.colcon_core.verb:set package 'thor_prefilter_controller' build argument 'ament_cmake_args' from command line to 'None'
+[0.720s] Level 5:colcon.colcon_core.verb:set package 'thor_prefilter_controller' build argument 'catkin_cmake_args' from command line to 'None'
+[0.720s] Level 5:colcon.colcon_core.verb:set package 'thor_prefilter_controller' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.720s] DEBUG:colcon.colcon_core.verb:Building package 'thor_prefilter_controller' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/wsl/ctrl_ws/src/thor_prefilter_controller/build/thor_prefilter_controller', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller', 'merge_install': False, 'path': '/home/wsl/ctrl_ws/src/thor_prefilter_controller', 'symlink_install': False, 'test_result_base': None}
+[0.721s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[0.726s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[0.727s] INFO:colcon.colcon_ros.task.catkin.build:Building ROS package in '/home/wsl/ctrl_ws/src/thor_prefilter_controller' with build type 'catkin'
+[0.727s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/wsl/ctrl_ws/src/thor_prefilter_controller'
+[0.737s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[0.738s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.738s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.752s] WARNING:colcon.colcon_ros.prefix_path.catkin:The path '/home/wsl/ctrl_ws/devel' in the environment variable CMAKE_PREFIX_PATH doesn't exist
+[0.759s] DEBUG:colcon.colcon_core.shell:Ignoring prefix path '/opt/ros/melodic'
+[0.779s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/wsl/ctrl_ws/src/thor_prefilter_controller/build/thor_prefilter_controller': /usr/bin/cmake /home/wsl/ctrl_ws/src/thor_prefilter_controller -DCATKIN_INSTALL_INTO_PREFIX_ROOT=0 -DCMAKE_INSTALL_PREFIX=/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller
+[22.527s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/wsl/ctrl_ws/src/thor_prefilter_controller/build/thor_prefilter_controller' returned '0': /usr/bin/cmake /home/wsl/ctrl_ws/src/thor_prefilter_controller -DCATKIN_INSTALL_INTO_PREFIX_ROOT=0 -DCMAKE_INSTALL_PREFIX=/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller
+[22.531s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/wsl/ctrl_ws/src/thor_prefilter_controller/build/thor_prefilter_controller': /usr/bin/cmake --build /home/wsl/ctrl_ws/src/thor_prefilter_controller/build/thor_prefilter_controller -- -j12 -l12
+[53.021s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/wsl/ctrl_ws/src/thor_prefilter_controller/build/thor_prefilter_controller' returned '0': /usr/bin/cmake --build /home/wsl/ctrl_ws/src/thor_prefilter_controller/build/thor_prefilter_controller -- -j12 -l12
+[53.319s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/wsl/ctrl_ws/src/thor_prefilter_controller/build/thor_prefilter_controller': /usr/bin/cmake --build /home/wsl/ctrl_ws/src/thor_prefilter_controller/build/thor_prefilter_controller --target tests -- -j12 -l12
+[53.519s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/wsl/ctrl_ws/src/thor_prefilter_controller/build/thor_prefilter_controller' returned '0': /usr/bin/cmake --build /home/wsl/ctrl_ws/src/thor_prefilter_controller/build/thor_prefilter_controller --target tests -- -j12 -l12
+[53.844s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/wsl/ctrl_ws/src/thor_prefilter_controller/build/thor_prefilter_controller': /usr/bin/cmake --build /home/wsl/ctrl_ws/src/thor_prefilter_controller/build/thor_prefilter_controller --target install -- -j12 -l12
+[54.756s] Level 1:colcon.colcon_core.shell:create_environment_hook('thor_prefilter_controller', 'ros_package_path')
+[54.759s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/thor_prefilter_controller/hook/ros_package_path.ps1'
+[54.763s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/wsl/ctrl_ws/src/thor_prefilter_controller/build/thor_prefilter_controller' returned '0': /usr/bin/cmake --build /home/wsl/ctrl_ws/src/thor_prefilter_controller/build/thor_prefilter_controller --target install -- -j12 -l12
+[54.764s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/thor_prefilter_controller/hook/ros_package_path.dsv'
+[54.765s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/thor_prefilter_controller/hook/ros_package_path.sh'
+[54.768s] Level 1:colcon.colcon_ros.task.catkin:checking '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/lib/python2.7/dist-packages'
+[54.769s] Level 1:colcon.colcon_core.shell:create_environment_hook('thor_prefilter_controller', 'pkg_config_path')
+[54.771s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/thor_prefilter_controller/hook/pkg_config_path.ps1'
+[54.773s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/thor_prefilter_controller/hook/pkg_config_path.dsv'
+[54.774s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/thor_prefilter_controller/hook/pkg_config_path.sh'
+[54.782s] Level 1:colcon.colcon_core.shell:create_environment_hook('thor_prefilter_controller', 'pkg_config_path_multiarch')
+[54.785s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/thor_prefilter_controller/hook/pkg_config_path_multiarch.ps1'
+[54.787s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/thor_prefilter_controller/hook/pkg_config_path_multiarch.dsv'
+[54.788s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/thor_prefilter_controller/hook/pkg_config_path_multiarch.sh'
+[54.793s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(thor_prefilter_controller)
+[54.808s] Level 1:colcon.colcon_core.environment:checking '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller' for CMake module files
+[54.810s] Level 1:colcon.colcon_core.environment:checking '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller' for CMake config files
+[54.811s] Level 1:colcon.colcon_core.shell:create_environment_hook('thor_prefilter_controller', 'cmake_prefix_path')
+[54.813s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/thor_prefilter_controller/hook/cmake_prefix_path.ps1'
+[54.814s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/thor_prefilter_controller/hook/cmake_prefix_path.dsv'
+[54.815s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/thor_prefilter_controller/hook/cmake_prefix_path.sh'
+[54.818s] Level 1:colcon.colcon_core.environment:checking '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/lib'
+[54.819s] Level 1:colcon.colcon_core.shell:create_environment_hook('thor_prefilter_controller', 'ld_library_path_lib')
+[54.821s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/thor_prefilter_controller/hook/ld_library_path_lib.ps1'
+[54.822s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/thor_prefilter_controller/hook/ld_library_path_lib.dsv'
+[54.823s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/thor_prefilter_controller/hook/ld_library_path_lib.sh'
+[54.824s] Level 1:colcon.colcon_core.environment:checking '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/bin'
+[54.824s] Level 1:colcon.colcon_core.environment:checking '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/lib/pkgconfig/thor_prefilter_controller.pc'
+[54.825s] Level 1:colcon.colcon_core.shell:create_environment_hook('thor_prefilter_controller', 'pkg_config')
+[54.826s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/thor_prefilter_controller/hook/pkg_config.ps1'
+[54.827s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/thor_prefilter_controller/hook/pkg_config.dsv'
+[54.828s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/thor_prefilter_controller/hook/pkg_config.sh'
+[54.829s] Level 1:colcon.colcon_core.environment:checking '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/lib/python3.6/site-packages'
+[54.831s] INFO:colcon.colcon_core.shell:Creating package script '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/thor_prefilter_controller/package.ps1'
+[54.834s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/thor_prefilter_controller/package.dsv'
+[54.835s] INFO:colcon.colcon_core.shell:Creating package script '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/thor_prefilter_controller/package.sh'
+[54.837s] INFO:colcon.colcon_core.shell:Creating package script '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/thor_prefilter_controller/package.bash'
+[54.838s] INFO:colcon.colcon_core.shell:Creating package script '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/thor_prefilter_controller/package.zsh'
+[54.840s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller/share/colcon-core/packages/thor_prefilter_controller)
+[54.842s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[54.843s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[54.843s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[54.843s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[55.063s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.notify_send': Could not find 'notify-send'
+[55.063s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[55.063s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[55.064s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[55.102s] DEBUG:colcon.colcon_notification.desktop_notification.notify2:Failed to initialize notify2: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.Notifications was not provided by any .service files
+[55.103s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[55.107s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/local_setup.ps1'
+[55.110s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/_local_setup_util_ps1.py'
+[55.115s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/setup.ps1'
+[55.130s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/local_setup.sh'
+[55.132s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/_local_setup_util_sh.py'
+[55.134s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/setup.sh'
+[55.150s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/local_setup.bash'
+[55.152s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/setup.bash'
+[55.168s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/local_setup.zsh'
+[55.169s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/setup.zsh'

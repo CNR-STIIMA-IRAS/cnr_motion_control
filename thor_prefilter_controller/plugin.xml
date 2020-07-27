@@ -1,0 +1,14 @@
+<library path="lib/libthor_prefilter_controller">
+  <class name="thor/PrefilterPosController" type="thor::PrefilterPosController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      ThorPrefilter Controller - Position Interface 
+    </description>
+  </class>
+  <class name="thor/PrefilterPosVelEffController" type="thor::PrefilterPosVelEffController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      ThorPrefilter Controller - Position Velocity Effort Interface
+    </description>
+  </class>
+  
+</library>
+

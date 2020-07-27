@@ -1,0 +1,91 @@
+control_configurations:
+  - name: "test"
+    components: 
+      - description: ""
+        hardware_interface: "fake_hi"
+        controller        : "thor_prefilter_planner"
+      - description: ""
+        hardware_interface: "fake_hi"
+        controller        : "js_pub"
+  - name: "thor"
+    components: 
+      - description: ""
+        hardware_interface: "fake_hi"
+        controller        : "thor_planner"
+      - description: ""
+        hardware_interface: "fake_hi"
+        controller        : "js_pub"
+
+      
+fake_hi:
+  type: "cnr/control/FakeRobotHwNodelet"
+  joint_names: 
+  - shoulder_pan_joint
+  - shoulder_lift_joint
+  - elbow_joint
+  - wrist_1_joint
+  - wrist_2_joint
+  - wrist_3_joint
+  allowed_controller_types: 
+  - "controller_type1"  
+  sampling_period: 0.008
+  diagnostic_period: 0.1
+  feedback_joint_state_timeout: 20
+  initial_position:  [0.0, -1.5708, 0.0, 0.0, 0.0, 0.0]
+  remap_source_args:
+  - "/fake_hi/thor_prefilter_planner/follow_joint_trajectory/cancel"
+  - "/fake_hi/thor_prefilter_planner/follow_joint_trajectory/feedback"
+  - "/fake_hi/thor_prefilter_planner/follow_joint_trajectory/goal"
+  - "/fake_hi/thor_prefilter_planner/follow_joint_trajectory/result"
+  - "/fake_hi/thor_prefilter_planner/follow_joint_trajectory/status"
+  - "/fake_hi/thor_planner/follow_joint_trajectory/cancel"
+  - "/fake_hi/thor_planner/follow_joint_trajectory/feedback"
+  - "/fake_hi/thor_planner/follow_joint_trajectory/goal"
+  - "/fake_hi/thor_planner/follow_joint_trajectory/result"
+  - "/fake_hi/thor_planner/follow_joint_trajectory/status"
+  - "/fake_hi/joint_states"
+  remap_target_args: 
+  - "/ur10/follow_joint_trajectory/cancel"
+  - "/ur10/follow_joint_trajectory/feedback"
+  - "/ur10/follow_joint_trajectory/goal"
+  - "/ur10/follow_joint_trajectory/result"
+  - "/ur10/follow_joint_trajectory/status"
+  - "/ur10/follow_joint_trajectory/cancel"
+  - "/ur10/follow_joint_trajectory/feedback"
+  - "/ur10/follow_joint_trajectory/goal"
+  - "/ur10/follow_joint_trajectory/result"
+  - "/ur10/follow_joint_trajectory/status"
+  - "/joint_states"
+  
+  thor_prefilter_planner:
+    type: "thor/PrefilterPosVelEffController"
+    controlled_joint:
+    - shoulder_pan_joint
+    - shoulder_lift_joint
+    - elbow_joint
+    - wrist_1_joint
+    - wrist_2_joint
+    - wrist_3_joint
+    spline_order: 1
+    
+  thor_planner:
+    type: "thor/ThorPosVelEffController"
+    controlled_joint:
+    - shoulder_pan_joint
+    - shoulder_lift_joint
+    - elbow_joint
+    - wrist_1_joint
+    - wrist_2_joint
+    - wrist_3_joint
+    spline_order: 2
+    period: 0.008
+    control_horizon: 1.0
+    prediction_size: 5
+    lambda_acc: 1.0e-4
+    lambda_tau: 0.0
+    lambda_scaling: 100.0
+    lambda_clik: 1000.0
+  js_pub:
+    type:         joint_state_controller/JointStateController
+    publish_rate: 125
+
