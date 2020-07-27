@@ -25,7 +25,7 @@
   <depend>control_msgs</depend> 
   <depend>sensor_msgs</depend>
   <depend>moveit_planning_helper</depend> 
-  
+  <depend>name_sorting</depend>  
   
 
   <export>

@@ -11,14 +11,14 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_BUILD_TYPE Release)
 
 find_package(catkin REQUIRED COMPONENTS
-  controller_interface roscpp thor_prefilter  cnr_hardware_interface actionlib trajectory_msgs control_msgs sensor_msgs moveit_planning_helper
+  cnr_controller_interface roscpp thor_prefilter  cnr_hardware_interface name_sorting actionlib trajectory_msgs control_msgs sensor_msgs moveit_planning_helper
 )
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES thor_prefilter_controller
-  CATKIN_DEPENDS cnr_controller_interface roscpp thor_prefilter  hardware_interface actionlib trajectory_msgs control_msgs sensor_msgs moveit_planning_helper
+  CATKIN_DEPENDS cnr_controller_interface name_sorting roscpp thor_prefilter  hardware_interface actionlib trajectory_msgs control_msgs sensor_msgs moveit_planning_helper
   DEPENDS
 )
 
