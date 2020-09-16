@@ -1,8 +1,0 @@
-prefix=/home/wsl/ctrl_ws/src/thor_prefilter_controller/install/thor_prefilter_controller
-
-Name: thor_prefilter_controller
-Description: Description of thor_prefilter_controller
-Version: 0.0.0
-Cflags: -I${prefix}/include
-Libs: -L${prefix}/lib -lthor_prefilter_controller
-Requires: cnr_controller_interface roscpp thor_prefilter hardware_interface actionlib trajectory_msgs control_msgs sensor_msgs moveit_planning_helper

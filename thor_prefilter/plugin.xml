@@ -1,0 +1,8 @@
+<library path="lib/libthor_prefilter">
+  <class name="thor/ThorPrefilter"
+         type="thor::ThorPrefilter"
+         base_class_type="cnr_interpolator_interface::InterpolatorInterface">
+    <description>
+    </description>
+  </class>
+</library>

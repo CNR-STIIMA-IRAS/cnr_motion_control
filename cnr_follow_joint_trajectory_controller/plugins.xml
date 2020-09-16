@@ -1,0 +1,15 @@
+<library path="lib/libcnr_follow_joint_trajectory_controller">
+  <class name="cnr/control/FollowJointTrajectoryPosController"
+         type="cnr::control::FollowJointTrajectoryPosController"
+         base_class_type="controller_interface::ControllerBase">
+    <description>
+    </description>
+  </class>
+
+  <class name="cnr/control/FollowJointTrajectoryPosVelEffController"
+       type="cnr::control::FollowJointTrajectoryPosVelEffController"
+       base_class_type="controller_interface::ControllerBase">
+    <description>
+    </description>
+  </class>
+</library>

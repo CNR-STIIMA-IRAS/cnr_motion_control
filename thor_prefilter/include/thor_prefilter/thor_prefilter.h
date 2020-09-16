@@ -1,36 +1,51 @@
-#ifndef THOR_PREFILTER____
-#define THOR_PREFILTER____
+#ifndef THOR_PREFILTER__THOR_PREFILTER__H
+#define THOR_PREFILTER__THOR_PREFILTER__H
 
+#include <eigen3/Eigen/Dense>
 #include <trajectory_msgs/JointTrajectory.h>
-#include <ros/console.h>
+#include <ros/node_handle.h>
+#include <cnr_interpolator_interface/cnr_interpolator_interface.h>
+
 namespace thor
 {
 
-class ThorPrefilter
+
+
+
+class ThorPrefilter : public cnr_interpolator_interface::InterpolatorInterface
 {
 protected:
-  trajectory_msgs::JointTrajectoryPtr m_trj;
+  cnr_interpolator_interface::JointTrajectoryPtr m_trj;
+  cnr_interpolator_interface::JointPointPtr m_last_interpolated_point;
+  cnr_interpolator_interface::JointState m_state;
   unsigned int m_order;
+
 public:
-  ThorPrefilter();
-  bool setTrajectory(const trajectory_msgs::JointTrajectoryPtr& trj);
+
+  ThorPrefilter() = default;
+  virtual ~ThorPrefilter() = default;
+  ThorPrefilter(const ThorPrefilter&) = delete;
+  ThorPrefilter& operator=(const ThorPrefilter&) = delete;
+  ThorPrefilter(ThorPrefilter&&) = delete;
+  ThorPrefilter& operator=(ThorPrefilter&&) = delete;
+
+  virtual bool initialize(cnr_logger::TraceLoggerPtr logger, ros::NodeHandle& nh,
+                          cnr_interpolator_interface::InterpolationTrajectoryPtr trj = nullptr);
+
+  virtual bool interpolate(const ros::Duration& time, cnr_interpolator_interface::InterpolationOutputPtr output);
+
+  virtual bool setTrajectory(cnr_interpolator_interface::InterpolationTrajectoryPtr trj);
+  virtual bool appendToTrajectory(cnr_interpolator_interface::InterpolationPointConstPtr point);
+  virtual const ros::Duration& trjTime() const;
+  virtual cnr_interpolator_interface::InterpolationPointConstPtr getLastInterpolatedPoint();
+  virtual cnr_interpolator_interface::InterpolationTrajectoryConstPtr getTrajectory();
+
   void setSplineOrder(const unsigned int& order);
-  bool interpolate(const ros::Duration& time, trajectory_msgs::JointTrajectoryPoint& pnt, const double& scaling = 1.0);
-  ros::Duration trjTime();
 };
 
-}
+typedef std::shared_ptr<thor::ThorPrefilter> ThorPrefilterPtr;
+typedef const std::shared_ptr<thor::ThorPrefilter const > ThorPrefilterConstPtr;
 
+}  // namespace thor
 
-
-
-
-
-
-
-
-
-
-
-
-#endif
+#endif  // THOR_PREFILTER__H

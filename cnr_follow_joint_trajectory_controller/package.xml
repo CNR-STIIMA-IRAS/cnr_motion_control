@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>cnr_follow_joint_trajectory_controller</name>
+  <version>0.0.0</version>
+  <description>The cnr_follow_joint_trajectory_controller package</description>
+
+  <!-- One maintainer tag required, multiple allowed, one person per tag -->
+  <!-- Example:  -->
+  <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
+  <maintainer email="tesla@todo.todo">tesla</maintainer>
+  <license>BSD</license>
+  <!-- <url type="website">http://wiki.ros.org/cnr_follow_joint_trajectory_controller</url> -->
+  <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
+
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>actionlib</build_depend>
+  <build_depend>controller_interface</build_depend>
+  <build_depend>cnr_controller_interface</build_depend>
+  <build_depend>cnr_hardware_interface</build_depend>
+  <build_depend>control_msgs</build_depend>
+  <build_depend>name_sorting</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>trajectory_msgs</build_depend>
+  <build_depend>pluginlib</build_depend>
+  <build_depend>cnr_interpolator_interface</build_depend>
+  <build_depend>cnr_regulator_interface</build_depend>
+
+  <build_export_depend>actionlib</build_export_depend>
+  <build_export_depend>controller_interface</build_export_depend>
+  <build_export_depend>cnr_controller_interface</build_export_depend>
+  <build_export_depend>cnr_hardware_interface</build_export_depend>
+  <build_export_depend>control_msgs</build_export_depend>
+  <build_export_depend>name_sorting</build_export_depend>
+  <build_export_depend>roscpp</build_export_depend>
+  <build_export_depend>sensor_msgs</build_export_depend>
+  <build_export_depend>trajectory_msgs</build_export_depend>
+  <build_export_depend>pluginlib</build_export_depend>
+  <build_export_depend>cnr_interpolator_interface</build_export_depend>
+  <build_export_depend>cnr_regulator_interface</build_export_depend>
+
+  <exec_depend>actionlib</exec_depend>
+  <exec_depend>controller_interface</exec_depend>
+  <exec_depend>cnr_controller_interface</exec_depend>
+  <exec_depend>cnr_hardware_interface</exec_depend>
+  <exec_depend>control_msgs</exec_depend>
+  <exec_depend>name_sorting</exec_depend>
+  <exec_depend>roscpp</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>trajectory_msgs</exec_depend>
+  <exec_depend>pluginlib</exec_depend>
+  <exec_depend>cnr_interpolator_interface</exec_depend>
+  <exec_depend>cnr_regulator_interface</exec_depend>
+
+  <export>
+    <controller_interface plugin="${prefix}/plugins.xml"/>
+  </export>
+</package>

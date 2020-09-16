@@ -24,17 +24,18 @@ int main(int argc, char **argv)
   pf.effort.resize(nAx, 0);
   pf.time_from_start = ros::Duration(time);
 
-  trajectory_msgs::JointTrajectoryPtr trj(new trajectory_msgs::JointTrajectory());
-  trj->points.push_back(p0);
-  trj->points.push_back(pf);
+  cnr_interpolator_interface::JointTrajectoryPtr ttrj(new cnr_interpolator_interface::JointTrajectory());
+  ttrj->trj->points.push_back(p0);
+  ttrj->trj->points.push_back(pf);
 
-  prefilter.setTrajectory(trj);
+  prefilter.setTrajectory(ttrj);
   prefilter.setSplineOrder(4);
   for (double t = 0; t < 2 * time; t += 0.01)
   {
     ROS_INFO("Time = %f", t);
-    trajectory_msgs::JointTrajectoryPoint pnt;
-    if (!prefilter.interpolate(ros::Duration(t), pnt))
+    cnr_interpolator_interface::JointInputPtr input(new cnr_interpolator_interface::JointInput());
+    cnr_interpolator_interface::JointOutputPtr output(new cnr_interpolator_interface::JointOutput());
+    if (!prefilter.interpolate(ros::Duration(t), output))
     {
       ROS_WARN("Something wrong");
       return 1;
@@ -42,21 +43,21 @@ int main(int argc, char **argv)
 
 
     std::cout << "positions: ";
-    for (double& p : pnt.positions)
+    for (double& p : output->pnt.positions)
       std::cout << p << ",";
     std::cout << std::endl;
 
     std::cout << "velocities: ";
-    for (double& v : pnt.velocities)
+    for (double& v : output->pnt.velocities)
       std::cout << v << ",";
     std::cout << std::endl;
 
     std::cout << "accelerations: ";
-    for (double& a : pnt.accelerations)
+    for (double& a : output->pnt.accelerations)
       std::cout << a << ",";
     std::cout << std::endl;
 
-    pub.publish(pnt);
+    pub.publish(output->pnt);
     ros::Duration(0.01).sleep();
   }
   return 0;
