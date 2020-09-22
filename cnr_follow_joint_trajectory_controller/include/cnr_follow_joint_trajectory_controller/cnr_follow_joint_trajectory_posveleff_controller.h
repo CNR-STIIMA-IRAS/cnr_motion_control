@@ -63,8 +63,10 @@ public:
 
   bool doInit()
   {
-    this->setPriority(Q_PRIORITY);
-    return FollowJointTrajectoryController<hardware_interface::PosVelEffJointInterface>::doInit();
+    CNR_TRACE_START(*m_logger);
+    this->setPriority(QD_PRIORITY);
+    bool ret = FollowJointTrajectoryController<hardware_interface::PosVelEffJointInterface>::doInit();
+    CNR_RETURN_BOOL(*m_logger, ret);
   }
 };
 

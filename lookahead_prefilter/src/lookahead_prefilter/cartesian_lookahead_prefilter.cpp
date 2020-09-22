@@ -35,9 +35,10 @@ bool CartesianLookaheadPrefilter::initialize(cnr_logger::TraceLoggerPtr logger,
   return true;
 }
 
-bool CartesianLookaheadPrefilter::interpolate(const ros::Duration&                               time,
+bool CartesianLookaheadPrefilter::interpolate(cnr_interpolator_interface::InterpolationInputConstPtr input,
                                               cnr_interpolator_interface::InterpolationOutputPtr output)
 {
+  CartesianInputConstPtr in   = std::dynamic_pointer_cast<CartesianInput const>( input );
   CartesianOutputPtr     out  = std::dynamic_pointer_cast<CartesianOutput>     ( output );
   CartesianTrajectoryPtr ctrj = std::dynamic_pointer_cast<CartesianTrajectory> ( m_trj );
 
@@ -56,7 +57,7 @@ bool CartesianLookaheadPrefilter::interpolate(const ros::Duration&              
   if (trj.size() == 0)
     return false;
 
-  if ((time - trj.at(0).time_from_start).toSec() < 0)
+  if ((in->time - trj.at(0).time_from_start).toSec() < 0)
   {
     out->pnt.x = trj.at(0).x;
     out->pnt.twist = Eigen::Vector6d::Zero();
@@ -64,7 +65,7 @@ bool CartesianLookaheadPrefilter::interpolate(const ros::Duration&              
     return false;
   }
 
-  if ((time - trj.back().time_from_start).toSec() >= 0)
+  if ((in->time - trj.back().time_from_start).toSec() >= 0)
   {
     out->pnt = trj.back();
     return true;
@@ -72,11 +73,11 @@ bool CartesianLookaheadPrefilter::interpolate(const ros::Duration&              
 
   for (unsigned int iPnt = 1; iPnt < trj.size(); iPnt++)
   {
-    if (((time - trj.at(iPnt).time_from_start).toSec() < 0) && ((time - trj.at(iPnt - 1).time_from_start).toSec() >= 0))
+    if (((in->time - trj.at(iPnt).time_from_start).toSec() < 0) && ((in->time - trj.at(iPnt - 1).time_from_start).toSec() >= 0))
     {
-      out->pnt.time_from_start = time;
+      out->pnt.time_from_start = in->time;
       double delta_time = std::max(1.0e-6, (trj.at(iPnt).time_from_start - trj.at(iPnt - 1).time_from_start).toSec());
-      double t          = (time - trj.at(iPnt - 1).time_from_start).toSec();
+      double t          = (in->time - trj.at(iPnt - 1).time_from_start).toSec();
       double ratio      = t / delta_time;
 
       Eigen::Affine3d T_0_1 =trj.at(iPnt - 1).x;
@@ -95,8 +96,8 @@ bool CartesianLookaheadPrefilter::interpolate(const ros::Duration&              
       Q_from_1_to_t_in_0.linear() = aa_from_1_to_t_in_0.toRotationMatrix();
 
       out->pnt.x = Q_from_1_to_t_in_0 * T_0_1;
-      out->pnt.twist.head(3) = Dx_from_1_to_2_in_0 / delta_time;
-      out->pnt.twist.tail(3) = aa_from_1_to_2_in_0.axis() * aa_from_1_to_2_in_0.angle() / delta_time;
+      out->pnt.twist.head(3) = in->override * Dx_from_1_to_2_in_0 / delta_time;
+      out->pnt.twist.tail(3) = in->override * aa_from_1_to_2_in_0.axis() * aa_from_1_to_2_in_0.angle() / delta_time;
       out->pnt.twistd = Eigen::Vector6d::Zero();
 
       *m_last_interpolated_point = out->pnt;

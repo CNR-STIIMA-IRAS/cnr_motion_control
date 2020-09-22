@@ -51,7 +51,7 @@ struct JointTrajectory : public cnr_interpolator_interface::InterpolationTraject
 
   virtual bool isEmpty() const
   {
-    return trj ? trj->points.size() >0 : false;
+    return trj ? trj->points.size() == 0 : false;
   }
 
   virtual bool append(cnr_interpolator_interface::InterpolationPointConstPtr point)

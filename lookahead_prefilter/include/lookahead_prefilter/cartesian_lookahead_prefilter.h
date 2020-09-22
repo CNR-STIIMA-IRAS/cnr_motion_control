@@ -31,8 +31,8 @@ public:
 
   virtual bool setTrajectory(cnr_interpolator_interface::InterpolationTrajectoryPtr trj);
   virtual bool appendToTrajectory(cnr_interpolator_interface::InterpolationPointConstPtr point);
-  virtual bool interpolate(const ros::Duration&                                time,
-                           cnr_interpolator_interface::InterpolationOutputPtr  output);
+  virtual bool interpolate(cnr_interpolator_interface::InterpolationInputConstPtr input,
+                           cnr_interpolator_interface::InterpolationOutputPtr     output);
 
   virtual const ros::Duration& trjTime() const;
   virtual cnr_interpolator_interface::InterpolationPointConstPtr getLastInterpolatedPoint();

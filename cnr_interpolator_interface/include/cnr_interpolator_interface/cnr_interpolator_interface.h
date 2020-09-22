@@ -14,7 +14,6 @@
 namespace cnr_interpolator_interface
 {
 
-
 /**
  * @brief The InterpolatorInterface class
  */
@@ -22,7 +21,9 @@ class InterpolatorInterface
 {
 private:
   ros::NodeHandle  m_controller_nh;
-
+  ros::Duration    m_starting_duration;
+  ros::Duration    m_interpolator_time;
+  bool             m_new_trajectory_interpolation_started;
 protected:
   cnr_logger::TraceLoggerPtr m_logger;
 
@@ -40,34 +41,52 @@ public:
                           ros::NodeHandle&            controller_nh,
                           InterpolationTrajectoryPtr  trj = nullptr);
 
-  virtual bool setTrajectory(InterpolationTrajectoryPtr /*trj*/)
+  virtual bool setTrajectory(InterpolationTrajectoryPtr trj)
   {
-    return false;
+    if(!trj)
+    {
+      CNR_RETURN_FALSE(*m_logger, "Trajectory is not set");
+    }
+    m_starting_duration = ros::Duration(0);
+    m_new_trajectory_interpolation_started = false;
+    CNR_RETURN_TRUE(*m_logger);
   }
+
   virtual bool appendToTrajectory(InterpolationPointConstPtr /*point*/)
   {
     return false;
   }
+
   virtual const ros::Duration& trjTime() const
   {
     static ros::Duration ret = ros::Duration(0);
     return ret;
   }
-  virtual bool interpolate(const ros::Duration& /*time*/, InterpolationOutputPtr /*output*/)
+
+  virtual bool interpolate(InterpolationInputConstPtr input, InterpolationOutputPtr /*output*/)
   {
+    if(m_new_trajectory_interpolation_started)
+    {
+      m_new_trajectory_interpolation_started = true;
+      m_starting_duration = input->time;
+    }
+    m_interpolator_time = input->time - m_starting_duration;
     return true;
-  }
-  virtual bool interpolate(const ros::Duration& /*time*/, InterpolationOutputPtr /*output*/, InterpolationInputConstPtr /*input*/)
-  {
-    return true;
+
   }
   virtual InterpolationPointConstPtr getLastInterpolatedPoint()
   {
     return nullptr;
   }
+
   virtual InterpolationTrajectoryConstPtr getTrajectory()
   {
     return nullptr;
+  }
+
+  virtual const ros::Duration& interpolatorTime()
+  {
+    return m_interpolator_time;
   }
 };
 

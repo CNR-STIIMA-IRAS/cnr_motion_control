@@ -20,6 +20,8 @@ bool InterpolatorInterface::initialize(cnr_logger::TraceLoggerPtr logger,
     return false;
   }
   CNR_TRACE_START(*m_logger);
+  m_starting_duration = ros::Duration(0);
+  m_new_trajectory_interpolation_started = false;
   bool ret = true;
   if(trj)
   {

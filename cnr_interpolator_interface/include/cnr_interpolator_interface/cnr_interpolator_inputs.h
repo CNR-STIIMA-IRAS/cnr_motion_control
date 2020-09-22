@@ -15,12 +15,15 @@ namespace cnr_interpolator_interface
  */
 struct InterpolationInput
 {
-  InterpolationInput() = default;
+  InterpolationInput() : time(0.0), override(1.0) {};
   virtual ~InterpolationInput() = default;
   InterpolationInput(const InterpolationInput&) = delete;
   InterpolationInput& operator=(const InterpolationInput&) = delete;
   InterpolationInput(InterpolationInput&&) = delete;
   InterpolationInput& operator=(InterpolationInput&&) = delete;
+
+  ros::Duration time;
+  double override;
 };
 typedef std::shared_ptr<InterpolationInput> InterpolationInputPtr;
 typedef const std::shared_ptr<InterpolationInput const > InterpolationInputConstPtr;

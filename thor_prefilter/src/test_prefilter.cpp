@@ -35,12 +35,13 @@ int main(int argc, char **argv)
     ROS_INFO("Time = %f", t);
     cnr_interpolator_interface::JointInputPtr input(new cnr_interpolator_interface::JointInput());
     cnr_interpolator_interface::JointOutputPtr output(new cnr_interpolator_interface::JointOutput());
-    if (!prefilter.interpolate(ros::Duration(t), output))
+    input->time = ros::Duration(t);
+    input->override = 1.0;
+    if (!prefilter.interpolate(input, output))
     {
       ROS_WARN("Something wrong");
       return 1;
     }
-
 
     std::cout << "positions: ";
     for (double& p : output->pnt.positions)

@@ -32,7 +32,8 @@ public:
   virtual bool initialize(cnr_logger::TraceLoggerPtr logger, ros::NodeHandle& nh,
                           cnr_interpolator_interface::InterpolationTrajectoryPtr trj = nullptr);
 
-  virtual bool interpolate(const ros::Duration& time, cnr_interpolator_interface::InterpolationOutputPtr output);
+  virtual bool interpolate(cnr_interpolator_interface::InterpolationInputConstPtr input,
+                           cnr_interpolator_interface::InterpolationOutputPtr     output);
 
   virtual bool setTrajectory(cnr_interpolator_interface::InterpolationTrajectoryPtr trj);
   virtual bool appendToTrajectory(cnr_interpolator_interface::InterpolationPointConstPtr point);

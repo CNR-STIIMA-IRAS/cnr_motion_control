@@ -65,15 +65,15 @@ void ThorPrefilter::setSplineOrder(const unsigned int& order)
 bool ThorPrefilter::setTrajectory(InterpolationTrajectoryPtr trj)
 {
   CNR_TRACE_START(*m_logger);
-  if(!trj)
+  if(!cnr_interpolator_interface::InterpolatorInterface::setTrajectory(trj))
   {
-    CNR_RETURN_FALSE(*m_logger, "Trajectory is not set");
+    CNR_RETURN_FALSE(*m_logger);
   }
   if(m_trj)
     m_trj.reset();
 
   m_trj = std::dynamic_pointer_cast<JointTrajectory>(trj);
-  if(m_trj)
+  if(!m_trj)
   {
     CNR_RETURN_FALSE(*m_logger, "Error in casting the pointer. Abort.");
   }
@@ -83,10 +83,12 @@ bool ThorPrefilter::setTrajectory(InterpolationTrajectoryPtr trj)
     m_last_interpolated_point.reset( new JointPoint() );
     m_last_interpolated_point->pnt =m_trj->trj->points.front();
   }
+  else
+  {
+    CNR_ERROR(*m_logger, "\n\n\n the trajectory is empy \n\n\n" );
+  }
   CNR_RETURN_BOOL(*m_logger, ret);
 }
-
-
 
 bool ThorPrefilter::appendToTrajectory(cnr_interpolator_interface::InterpolationPointConstPtr point)
 {
@@ -108,68 +110,75 @@ const ros::Duration& ThorPrefilter::trjTime() const
   }
 }
 
-bool ThorPrefilter::interpolate(const ros::Duration&                               time,
-                                cnr_interpolator_interface::InterpolationOutputPtr output)
+bool ThorPrefilter::interpolate(cnr_interpolator_interface::InterpolationInputConstPtr input,
+                                cnr_interpolator_interface::InterpolationOutputPtr     output)
 {
-  JointOutputPtr     out     = std::dynamic_pointer_cast<JointOutput>     ( output );
-  if (!out)
+  if(!cnr_interpolator_interface::InterpolatorInterface::interpolate(input,output))
+  {
+    CNR_RETURN_FALSE(*m_logger);
+  }
+  JointInputConstPtr in = std::dynamic_pointer_cast<JointInput const>(input);
+  JointOutputPtr out = std::dynamic_pointer_cast<JointOutput>(output);
+  if(!out && !in)
   {
     CNR_RETURN_FALSE(*m_logger, "The dynamic cast failed, the function parameter seems to be not a JointOutputPtr");
   }
 
-  if (!m_trj)
+  if(!m_trj)
   {
     CNR_RETURN_FALSE(*m_logger, "The dynamic cast failed, the function parameter seems to be not a JointTrajectoryPtr");
   }
 
   trajectory_msgs::JointTrajectoryPtr trj = m_trj->trj;
-  if (!trj)
+  if(!trj)
   {
     CNR_ERROR(*m_logger, "Trajectory is not set");
     return false;
   }
 
-
-  if (trj->points.size() == 0)
+  if(trj->points.size() == 0)
     return false;
 
-  if ((time - trj->points.at(0).time_from_start).toSec() < 0)
+  if(( - trj->points.at(0).time_from_start).toSec() < 0)
   {
     out->pnt = trj->points.at(0);
     out->pnt.effort.resize(trj->points.at(0).positions.size(), 0);
     return false;
   }
 
-  if ((time - trj->points.back().time_from_start).toSec() >= 0)
+  if((interpolatorTime() - trj->points.back().time_from_start).toSec() >= 0)
   {
     out->pnt = trj->points.back();
     out->pnt.effort.resize(trj->points.back().positions.size(), 0);
     return true;
   }
 
-  for (unsigned int iPnt = 1; iPnt < trj->points.size(); iPnt++)
+  for(unsigned int iPnt = 1; iPnt < trj->points.size(); iPnt++)
   {
-    if (((time - trj->points.at(iPnt).time_from_start).toSec() < 0) && ((time - trj->points.at(iPnt-1).time_from_start).toSec() >= 0))
+    if(((interpolatorTime() - trj->points.at(iPnt).time_from_start).toSec() < 0)
+     &&((interpolatorTime() - trj->points.at(iPnt-1).time_from_start).toSec() >= 0))
     {
       unsigned int nAx = trj->points.at(iPnt).positions.size();
       out->pnt.positions.resize(nAx, 0);
       out->pnt.velocities.resize(nAx, 0);
       out->pnt.accelerations.resize(nAx, 0);
       out->pnt.effort.resize(nAx, 0);
-      out->pnt.time_from_start = time;
-      double delta_time = std::max(1.0e-6, (trj->points.at(iPnt).time_from_start - trj->points.at(iPnt-1).time_from_start).toSec());
-      double t = (time - trj->points.at(iPnt-1).time_from_start).toSec();
+      out->pnt.time_from_start = interpolatorTime();
+      double delta_time = std::max(1.0e-6,
+                                  (trj->points.at(iPnt).time_from_start-trj->points.at(iPnt-1).time_from_start).toSec());
+      double t = (interpolatorTime() - trj->points.at(iPnt-1).time_from_start).toSec();
       double ratio = t / delta_time;
-      for (unsigned int iAx = 0; iAx < nAx; iAx++)
+      for(unsigned int iAx = 0; iAx < nAx; iAx++)
       {
         //spline
-        if (m_order == 0)
+        if(m_order == 0)
         {
-          out->pnt.positions.at(iAx)  = trj->points.at(iPnt-1).positions.at(iAx)
-                                      + ratio * (trj->points.at(iPnt).positions.at(iAx) - trj->points.at(iPnt-1).positions.at(iAx));
-          out->pnt.velocities.at(iAx) = (trj->points.at(iPnt).positions.at(iAx) - trj->points.at(iPnt-1).positions.at(iAx)) / delta_time;
+          out->pnt.positions.at(iAx) = trj->points.at(iPnt-1).positions.at(iAx)
+                       + ratio * (trj->points.at(iPnt).positions.at(iAx)-trj->points.at(iPnt-1).positions.at(iAx));
+          out->pnt.velocities.at(iAx)= (trj->points.at(iPnt).positions.at(iAx)-trj->points.at(iPnt-1).positions.at(iAx))
+                       / delta_time;
         }
-        else if (m_order == 1)
+        else if(m_order == 1)
         {
           double& p0_1 = trj->points.at(iPnt-1).positions.at(iAx);
           double& p0_2 = trj->points.at(iPnt-1).velocities.at(iAx);
@@ -186,7 +195,7 @@ bool ThorPrefilter::interpolate(const ros::Duration&                            
           out->pnt.accelerations.at(iAx) = c3 * 2.0 + c4 * t * 6.0;
 
         }
-        else if (m_order == 2)
+        else if(m_order == 2)
         {
           double& p0_1 = trj->points.at(iPnt-1).positions.at(iAx);
           double& p0_2 = trj->points.at(iPnt-1).velocities.at(iAx);
@@ -207,7 +216,7 @@ bool ThorPrefilter::interpolate(const ros::Duration&                            
           out->pnt.velocities.at(iAx)    = c2 + c3 * t * 2.0 + c4 * (t * t) * 3.0 + c5 * (t * t * t) * 4.0 + c6 * (t * t * t * t) * 5.0;
           out->pnt.accelerations.at(iAx) = c3 * 2.0 + c4 * t * 6.0 + c5 * (t * t) * 1.2E1 + c6 * (t * t * t) * 2.0E1;
         }
-        else if (m_order == 3)
+        else if(m_order == 3)
         {
           double& p0_1 = trj->points.at(iPnt-1).positions.at(iAx);
           double& p0_2 = trj->points.at(iPnt-1).velocities.at(iAx);
@@ -230,7 +239,7 @@ bool ThorPrefilter::interpolate(const ros::Duration&                            
           out->pnt.velocities.at(iAx)    = c2 + c3 * t * 2.0 + c4 * (t * t) * 3.0 + c5 * (t * t * t) * 4.0 + c6 * (t * t * t * t) * 5.0 + c7 * (t * t * t * t * t) * 6.0 + c8 * (t * t * t * t * t * t) * 7.0;
           out->pnt.accelerations.at(iAx) = c3 * 2.0 + c4 * t * 6.0 + c5 * (t * t) * 1.2E1 + c6 * (t * t * t) * 2.0E1 + c7 * (t * t * t * t) * 3.0E1 + c8 * (t * t * t * t * t) * 4.2E1;
         }
-        else if (m_order == 4)
+        else if(m_order == 4)
         {
           double& p0_1 = trj->points.at(iPnt-1).positions.at(iAx);
           double& p0_2 = trj->points.at(iPnt-1).velocities.at(iAx);
@@ -250,13 +259,16 @@ bool ThorPrefilter::interpolate(const ros::Duration&                            
           double c9 = 1.0 / (delta_time * delta_time * delta_time * delta_time * delta_time * delta_time * delta_time * delta_time) * (p0_1 * 1.26E2 - pf_1 * 1.26E2 + delta_time * p0_2 * 6.4E1 + delta_time * pf_2 * 6.2E1 + (delta_time * delta_time) * p0_3 * 1.4E1 - (delta_time * delta_time) * pf_3 * 1.3E1) * (5.0 / 2.0);
           double c10 = 1.0 / (delta_time * delta_time * delta_time * delta_time * delta_time * delta_time * delta_time * delta_time * delta_time) * (p0_1 * 2.8E1 - pf_1 * 2.8E1 + delta_time * p0_2 * 1.4E1 + delta_time * pf_2 * 1.4E1 + (delta_time * delta_time) * p0_3 * 3.0 - (delta_time * delta_time) * pf_3 * 3.0) * (-5.0 / 2.0);
 
-
           out->pnt.positions.at(iAx)     = c1 + c2 * t + c3 * (t * t) + c4 * (t * t * t) + c5 * (t * t * t * t) + c6 * (t * t * t * t * t) + c7 * (t * t * t * t * t * t) + c8 * (t * t * t * t * t * t * t) + c9 * (t * t * t * t * t * t * t * t) + c10 * (t * t * t * t * t * t * t * t * t);
           out->pnt.velocities.at(iAx)    = c2 + c3 * t * 2.0 + c4 * (t * t) * 3.0 + c5 * (t * t * t) * 4.0 + c6 * (t * t * t * t) * 5.0 + c7 * (t * t * t * t * t) * 6.0 + c8 * (t * t * t * t * t * t) * 7.0 + c9 * (t * t * t * t * t * t * t) * 8.0 + c10 * (t * t * t * t * t * t * t * t) * 9.0;
           out->pnt.accelerations.at(iAx) = c3 * 2.0 + c4 * t * 6.0 + c5 * (t * t) * 1.2E1 + c6 * (t * t * t) * 2.0E1 + c7 * (t * t * t * t) * 3.0E1 + c8 * (t * t * t * t * t) * 4.2E1 + c9 * (t * t * t * t * t * t) * 5.6E1 + c10 * (t * t * t * t * t * t * t) * 7.2E1;
+
+          out->pnt.velocities.at(iAx)    *= in->override;
+          out->pnt.accelerations.at(iAx) *= in->override * in->override;
         }
       }
       m_last_interpolated_point->pnt = out->pnt;
+
       break;
     }
   }

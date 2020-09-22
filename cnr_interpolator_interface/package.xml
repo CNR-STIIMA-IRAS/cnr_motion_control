@@ -28,19 +28,16 @@
   <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
 
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>Eigen3</build_depend>
   <build_depend>cnr_logger</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>trajectory_msgs</build_depend>
   <build_depend>rosdyn_core</build_depend>
 
-  <build_export_depend>Eigen3</build_export_depend>
   <build_export_depend>cnr_logger</build_export_depend>
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>trajectory_msgs</build_export_depend>
   <build_export_depend>rosdyn_core</build_export_depend>
 
-  <exec_depend>Eigen3</exec_depend>
   <exec_depend>cnr_logger</exec_depend>
   <exec_depend>roscpp</exec_depend>
   <exec_depend>trajectory_msgs</exec_depend>

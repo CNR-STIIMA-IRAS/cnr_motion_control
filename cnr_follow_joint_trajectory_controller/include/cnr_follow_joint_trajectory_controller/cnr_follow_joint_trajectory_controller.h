@@ -95,8 +95,10 @@ protected:
   std::thread m_as_thread;
   bool m_preempted;
 
-  ros::Duration m_time;
   bool m_is_in_tolerance;
+
+  size_t m_scaled_time_pub_idx;
+  size_t m_target_pub_idx;
 
 };
 
