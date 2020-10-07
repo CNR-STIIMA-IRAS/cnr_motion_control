@@ -191,7 +191,7 @@ bool FollowJointTrajectoryController<H,T>::doUpdate(const ros::Time& time, const
   {
     CNR_ERROR(*this->logger(), "Got and exception: '" << e.what()
                << "'(function input: Time: " << time.toSec() << " Duration: " << period.toSec() << ")" );
-    CNR_RETURN_FALSE(*this->logger());
+    //CNR_RETURN_FALSE(*this->logger());
   }
   CNR_RETURN_TRUE_THROTTLE_DEFAULT(*this->logger());
 }
