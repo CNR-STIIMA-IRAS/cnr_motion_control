@@ -1,6 +1,8 @@
 #ifndef CNR_FOLLOW_JOINT_TRAJECTORY_CONTROLLER_CNR_FOLLOW_JOINT_TRAJECTORY_CONTROLLER_IMPL_H
 #define CNR_FOLLOW_JOINT_TRAJECTORY_CONTROLLER_CNR_FOLLOW_JOINT_TRAJECTORY_CONTROLLER_IMPL_H
 
+#include <memory>
+#include <thread>
 #include <controller_interface/controller_base.h>
 #include <name_sorting/sort_trajectories.h>
 #include <std_msgs/Int64.h>
@@ -12,6 +14,8 @@
 #include <cnr_interpolator_interface/cnr_interpolator_point.h>
 #include <cnr_interpolator_interface/cnr_interpolator_trajectory.h>
 
+#include <cnr_regulator_interface/cnr_regulator_state.h>
+#include <cnr_regulator_interface/cnr_regulator_options.h>
 #include <cnr_regulator_interface/cnr_regulator_inputs.h>
 #include <cnr_regulator_interface/cnr_regulator_outputs.h>
 
@@ -20,8 +24,8 @@ namespace cnr
 namespace control
 {
 
-template< class T>
-FollowJointTrajectoryController<T>::~FollowJointTrajectoryController()
+template<class H, class T>
+FollowJointTrajectoryController<H,T>::~FollowJointTrajectoryController()
 {
   CNR_DEBUG(*this->logger(), "Destroying Thor Prefilter Controller");
   joinActionServerThread();
@@ -29,10 +33,10 @@ FollowJointTrajectoryController<T>::~FollowJointTrajectoryController()
   CNR_DEBUG(*this->logger(), "Destroyed Thor Prefilter Controller");
 }
 
-template< class T>
-FollowJointTrajectoryController<T>::FollowJointTrajectoryController()
+template<class H, class T>
+FollowJointTrajectoryController<H,T>::FollowJointTrajectoryController()
   : m_interpolator_loader("cnr_interpolator_interface", "cnr_interpolator_interface::InterpolatorInterface")
-  , m_regulator_loader("cnr_regulator_interface", "cnr_regulator_interface::RegulatorBase")
+  , m_regulator_loader("cnr_regulator_interface", "cnr_regulator_interface::BaseRegulator")
 {
   m_is_in_tolerance = false;
   m_preempted = false;
@@ -45,8 +49,8 @@ FollowJointTrajectoryController<T>::FollowJointTrajectoryController()
 
 }
 
-template< class T>
-bool FollowJointTrajectoryController<T>::doInit()
+template<class H, class T>
+bool FollowJointTrajectoryController<H,T>::doInit()
 {
   CNR_TRACE_START(*this->logger());
 
@@ -58,7 +62,7 @@ bool FollowJointTrajectoryController<T>::doInit()
   try
   {
     auto interp = m_interpolator_loader.createInstance(interpolator);
-    m_interpolator = cnr_controller_interface::to_std_shared_ptr( interp );
+    m_interpolator = cnr_controller_interface::to_std_ptr( interp );
     if(!m_interpolator->initialize(this->logger(), this->getControllerNh()) )
     {
       CNR_RETURN_FALSE(*this->logger(), "The interpolator init failed. Abort.")
@@ -78,9 +82,14 @@ bool FollowJointTrajectoryController<T>::doInit()
   try
   {
     auto reg = m_regulator_loader.createInstance(regulator);
-    m_regulator = cnr_controller_interface::to_std_shared_ptr( reg );
-    if(!m_regulator->initialize(this->getRootNh(), this->getControllerNh(),
-                                this->logger(), this->m_kin, this->m_state, ros::Duration(this->m_sampling_period)))
+    m_regulator = cnr_controller_interface::to_std_ptr( reg );
+    
+    cnr_regulator_interface::JointRegulatorOptionsPtr opts( new cnr_regulator_interface::JointRegulatorOptions() );
+    opts->logger    = this->m_logger;
+    opts->period    = ros::Duration(this->m_sampling_period);
+    opts->dim       = this->nAx();
+    opts->robot_kin = this->m_kin;
+    if(!m_regulator->initialize(this->getRootNh(), this->getControllerNh(), opts))
     {
       CNR_RETURN_FALSE(*this->logger(), "The regulator init failed. Abort.")
     }
@@ -110,15 +119,15 @@ bool FollowJointTrajectoryController<T>::doInit()
   m_as.reset(new actionlib::ActionServer<control_msgs::FollowJointTrajectoryAction>(
                     this->getControllerNh(),
                     "follow_joint_trajectory",
-                    boost::bind(&FollowJointTrajectoryController<T>::actionGoalCallback, this, _1),
-                    boost::bind(&FollowJointTrajectoryController<T>::actionCancelCallback, this, _1),
+                    boost::bind(&FollowJointTrajectoryController<H,T>::actionGoalCallback, this, _1),
+                    boost::bind(&FollowJointTrajectoryController<H,T>::actionCancelCallback, this, _1),
                     false));
 
   CNR_RETURN_TRUE(*this->logger());
 }
 
-template< class T>
-bool FollowJointTrajectoryController<T>::doStarting(const ros::Time& time)
+template<class H, class T>
+bool FollowJointTrajectoryController<H,T>::doStarting(const ros::Time& time)
 {
   CNR_TRACE_START(*this->logger());
 
@@ -131,15 +140,19 @@ bool FollowJointTrajectoryController<T>::doStarting(const ros::Time& time)
 
   cnr_interpolator_interface::JointTrajectoryPtr trj(new cnr_interpolator_interface::JointTrajectory({pnt}) );
   m_interpolator->setTrajectory(trj);
-  m_regulator->starting(ros::Time::now());
+  
+  m_regulator_state0.reset(new cnr_regulator_interface::JointRegulatorState( ) );
+  m_regulator_state0->setRobotState( *this->m_state );
+  
+  m_regulator->starting(m_regulator_state0, ros::Time::now());
   m_regulator_input->set_target_override(1.0);
 
   m_as->start();
   CNR_RETURN_TRUE(*this->logger());
 }
 
-template<class T>
-bool FollowJointTrajectoryController<T>::doUpdate(const ros::Time& time, const ros::Duration& period)
+template<class H, class T>
+bool FollowJointTrajectoryController<H,T>::doUpdate(const ros::Time& time, const ros::Duration& period)
 {
   CNR_TRACE_START_THROTTLE_DEFAULT(this->logger());
   try
@@ -147,6 +160,8 @@ bool FollowJointTrajectoryController<T>::doUpdate(const ros::Time& time, const r
     m_regulator_input->set_target_override(this->getTargetOverride());
     m_regulator_input->set_period(period);
     m_regulator->update(m_interpolator, m_regulator_input, m_regulator_output);
+
+    m_is_in_tolerance = m_regulator_output->get_in_goal_tolerance();
 
     this->setCommandPosition     (m_regulator_output->get_q());
     this->setCommandVelocity     (m_regulator_output->get_qd());
@@ -181,8 +196,8 @@ bool FollowJointTrajectoryController<T>::doUpdate(const ros::Time& time, const r
   CNR_RETURN_TRUE_THROTTLE_DEFAULT(*this->logger());
 }
 
-template< class T>
-bool FollowJointTrajectoryController<T>::doStopping(const ros::Time& time)
+template<class H, class T>
+bool FollowJointTrajectoryController<H,T>::doStopping(const ros::Time& time)
 {
   CNR_TRACE_START(*this->logger());
   if (m_gh)
@@ -194,8 +209,8 @@ bool FollowJointTrajectoryController<T>::doStopping(const ros::Time& time)
   CNR_RETURN_TRUE(*this->logger());
 }
 
-template< class T>
-bool FollowJointTrajectoryController<T>::joinActionServerThread()
+template<class H, class T>
+bool FollowJointTrajectoryController<H,T>::joinActionServerThread()
 {
   m_preempted = true;
   if (m_as_thread.joinable())
@@ -206,8 +221,8 @@ bool FollowJointTrajectoryController<T>::joinActionServerThread()
   return true;
 }
 
-template< class T>
-void FollowJointTrajectoryController<T>::actionServerThread()
+template<class H, class T>
+void FollowJointTrajectoryController<H,T>::actionServerThread()
 {
   CNR_DEBUG(*this->logger(), "START ACTION GOAL LOOPING");
   ros::WallRate lp(100);
@@ -265,8 +280,8 @@ void FollowJointTrajectoryController<T>::actionServerThread()
   CNR_DEBUG(*this->logger(), "START ACTION GOAL END");
 }
 
-template< class T>
-void FollowJointTrajectoryController<T>::actionGoalCallback(
+template<class H, class T>
+void FollowJointTrajectoryController<H,T>::actionGoalCallback(
                                     actionlib::ActionServer<control_msgs::FollowJointTrajectoryAction>::GoalHandle gh)
 {
   CNR_TRACE_START(*this->logger());
@@ -316,7 +331,7 @@ void FollowJointTrajectoryController<T>::actionGoalCallback(
   {
     std::lock_guard<std::mutex> lock(m_mtx);
     m_interpolator->setTrajectory(interp_trj);
-    m_regulator->starting(ros::Time::now());
+    m_regulator->starting(m_regulator_state0, ros::Time::now());
     CNR_DEBUG(*this->logger(), "Starting managing new goal");
     std::stringstream ss1; ss1 << "[ "; for(const auto & q  : interp_trj->trj->points.front().positions ) ss1 << std::to_string( q ) << " "; ss1 << "]";
     std::stringstream ss2; ss2 << "[ "; for(const auto & qd : interp_trj->trj->points.front().velocities ) ss2 << std::to_string( qd ) << " ";  ss2 << "]";
@@ -332,13 +347,13 @@ void FollowJointTrajectoryController<T>::actionGoalCallback(
 
   joinActionServerThread();
 
-  m_as_thread = std::thread(&FollowJointTrajectoryController<T>::actionServerThread, this);
+  m_as_thread = std::thread(&FollowJointTrajectoryController<H,T>::actionServerThread, this);
 
   CNR_RETURN_OK(*this->logger(), void() );
 }
 
-template< class T>
-void FollowJointTrajectoryController<T>::actionCancelCallback(
+template<class H, class T>
+void FollowJointTrajectoryController<H,T>::actionCancelCallback(
                                   actionlib::ActionServer< control_msgs::FollowJointTrajectoryAction >::GoalHandle gh)
 {
   CNR_TRACE_START(*this->logger());

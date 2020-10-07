@@ -57,7 +57,7 @@ namespace control
 {
 
 class FollowJointTrajectoryPosVelEffController :
-    public FollowJointTrajectoryController<hardware_interface::PosVelEffJointInterface>
+  public FollowJointTrajectoryController<hardware_interface::PosVelEffJointHandle, hardware_interface::PosVelEffJointInterface>
 {
 public:
 
@@ -65,7 +65,7 @@ public:
   {
     CNR_TRACE_START(*m_logger);
     this->setPriority(QD_PRIORITY);
-    bool ret = FollowJointTrajectoryController<hardware_interface::PosVelEffJointInterface>::doInit();
+    bool ret = FollowJointTrajectoryController<hardware_interface::PosVelEffJointHandle, hardware_interface::PosVelEffJointInterface>::doInit();
     CNR_RETURN_BOOL(*m_logger, ret);
   }
 };

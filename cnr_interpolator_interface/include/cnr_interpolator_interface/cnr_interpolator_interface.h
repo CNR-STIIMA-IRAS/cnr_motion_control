@@ -74,17 +74,17 @@ public:
     return true;
 
   }
-  virtual InterpolationPointConstPtr getLastInterpolatedPoint()
+  virtual InterpolationPointConstPtr getLastInterpolatedPoint() const
   {
     return nullptr;
   }
 
-  virtual InterpolationTrajectoryConstPtr getTrajectory()
+  virtual InterpolationTrajectoryConstPtr getTrajectory() const
   {
     return nullptr;
   }
 
-  virtual const ros::Duration& interpolatorTime()
+  virtual const ros::Duration& interpolatorTime() const
   {
     return m_interpolator_time;
   }

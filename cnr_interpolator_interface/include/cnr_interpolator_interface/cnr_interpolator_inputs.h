@@ -15,7 +15,7 @@ namespace cnr_interpolator_interface
  */
 struct InterpolationInput
 {
-  InterpolationInput() : time(0.0), override(1.0) {};
+  InterpolationInput() : time(0.0), override(1.0) {}
   virtual ~InterpolationInput() = default;
   InterpolationInput(const InterpolationInput&) = delete;
   InterpolationInput& operator=(const InterpolationInput&) = delete;

@@ -113,6 +113,8 @@ const ros::Duration& ThorPrefilter::trjTime() const
 bool ThorPrefilter::interpolate(cnr_interpolator_interface::InterpolationInputConstPtr input,
                                 cnr_interpolator_interface::InterpolationOutputPtr     output)
 {
+  // the cnr_interpolator_interface::InterpolatorInterface::interpolate shift the input time to the interpolation_time,
+  // removing the first time the function interpolate is called
   if(!cnr_interpolator_interface::InterpolatorInterface::interpolate(input,output))
   {
     CNR_RETURN_FALSE(*m_logger);
@@ -137,11 +139,14 @@ bool ThorPrefilter::interpolate(cnr_interpolator_interface::InterpolationInputCo
   }
 
   if(trj->points.size() == 0)
+  {
     return false;
+  }
 
-  if(( - trj->points.at(0).time_from_start).toSec() < 0)
+  if((interpolatorTime() - trj->points.at(0).time_from_start).toSec() < 0)
   {
     out->pnt = trj->points.at(0);
+    out->pnt.velocities.resize(trj->points.at(0).positions.size(), 0);
     out->pnt.effort.resize(trj->points.at(0).positions.size(), 0);
     return false;
   }
@@ -149,6 +154,7 @@ bool ThorPrefilter::interpolate(cnr_interpolator_interface::InterpolationInputCo
   if((interpolatorTime() - trj->points.back().time_from_start).toSec() >= 0)
   {
     out->pnt = trj->points.back();
+    out->pnt.velocities.resize(trj->points.at(0).positions.size(), 0);
     out->pnt.effort.resize(trj->points.back().positions.size(), 0);
     return true;
   }
@@ -275,11 +281,11 @@ bool ThorPrefilter::interpolate(cnr_interpolator_interface::InterpolationInputCo
   return true;
 }
 
-cnr_interpolator_interface::InterpolationPointConstPtr ThorPrefilter::getLastInterpolatedPoint()
+cnr_interpolator_interface::InterpolationPointConstPtr ThorPrefilter::getLastInterpolatedPoint() const
 {
   return m_last_interpolated_point;
 }
-cnr_interpolator_interface::InterpolationTrajectoryConstPtr ThorPrefilter::getTrajectory()
+cnr_interpolator_interface::InterpolationTrajectoryConstPtr ThorPrefilter::getTrajectory() const
 {
   return m_trj;
 }

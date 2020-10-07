@@ -45,7 +45,6 @@
 #include <mutex>
 #include <std_msgs/Int64.h>
 #include <std_msgs/Float64.h>
-#include <cnr_hardware_interface/posveleff_command_interface.h>
 #include <hardware_interface/joint_command_interface.h>
 #include <cnr_controller_interface/cnr_joint_command_controller_interface.h>
 #include <cnr_follow_joint_trajectory_controller/cnr_follow_joint_trajectory_controller.h>
@@ -56,7 +55,7 @@ namespace control
 {
 
 class FollowJointTrajectoryPosController :
-    public FollowJointTrajectoryController<hardware_interface::PositionJointInterface>
+    public FollowJointTrajectoryController<hardware_interface::JointHandle, hardware_interface::PositionJointInterface>
 {
 public:
 
@@ -64,7 +63,8 @@ public:
   {
     CNR_TRACE_START(*m_logger);
     this->setPriority(Q_PRIORITY);
-    bool ret = FollowJointTrajectoryController<hardware_interface::PositionJointInterface>::doInit();
+    bool ret = FollowJointTrajectoryController<hardware_interface::JointHandle, 
+                                               hardware_interface::PositionJointInterface>::doInit();
     CNR_RETURN_BOOL(*m_logger, ret);
   }
 };

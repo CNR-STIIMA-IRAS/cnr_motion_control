@@ -35,23 +35,17 @@
 #ifndef CNR_FOLLOW_JOINT_TRAJECTORY_CONTROLLER__CNR_FOLLOW_JOINT_TRAJECTORY_CONTROLLER__H
 #define CNR_FOLLOW_JOINT_TRAJECTORY_CONTROLLER__CNR_FOLLOW_JOINT_TRAJECTORY_CONTROLLER__H
 
+#include <mutex>
+#include <memory>
 
+#include <ros/ros.h>
 #include <actionlib/server/action_server.h>
 #include <control_msgs/FollowJointTrajectoryAction.h>
-#include <ros/ros.h>
-#include <ros/callback_queue.h>
-#include <diagnostic_msgs/DiagnosticArray.h>
-#include <thread>
-#include <mutex>
-#include <std_msgs/Int64.h>
-#include <std_msgs/Float64.h>
-#include <cnr_hardware_interface/posveleff_command_interface.h>
-#include <hardware_interface/joint_command_interface.h>
+#include <pluginlib/class_loader.h>
+
 #include <cnr_controller_interface/cnr_joint_command_controller_interface.h>
 #include <cnr_interpolator_interface/cnr_interpolator_interface.h>
 #include <cnr_regulator_interface/cnr_regulator_base.h>
-
-#include <pluginlib/class_loader.h>
 
 namespace cnr
 {
@@ -60,8 +54,8 @@ namespace control
 
 using cnr_interpolator_interface::InterpolatorInterface;
 
-template<class T>
-class FollowJointTrajectoryController : public cnr_controller_interface::JointCommandController< T >
+template<class H, class T>
+class FollowJointTrajectoryController : public cnr_controller_interface::JointCommandController<H,T>
 {
 public:
   FollowJointTrajectoryController();
@@ -81,9 +75,10 @@ protected:
   pluginlib::ClassLoader<InterpolatorInterface> m_interpolator_loader;
   std::shared_ptr<InterpolatorInterface> m_interpolator;
 
-  pluginlib::ClassLoader<cnr_regulator_interface::RegulatorBase> m_regulator_loader;
-  std::shared_ptr<cnr_regulator_interface::RegulatorBase> m_regulator;
-  cnr_regulator_interface::JointRegulatorInputPtr m_regulator_input;
+  pluginlib::ClassLoader<cnr_regulator_interface::BaseRegulator> m_regulator_loader;
+  std::shared_ptr<cnr_regulator_interface::BaseRegulator> m_regulator;
+  cnr_regulator_interface::JointRegulatorStatePtr  m_regulator_state0;
+  cnr_regulator_interface::JointRegulatorInputPtr  m_regulator_input;
   cnr_regulator_interface::JointRegulatorOutputPtr m_regulator_output;
 
 

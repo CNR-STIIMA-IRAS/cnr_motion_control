@@ -38,8 +38,8 @@ public:
   virtual bool setTrajectory(cnr_interpolator_interface::InterpolationTrajectoryPtr trj);
   virtual bool appendToTrajectory(cnr_interpolator_interface::InterpolationPointConstPtr point);
   virtual const ros::Duration& trjTime() const;
-  virtual cnr_interpolator_interface::InterpolationPointConstPtr getLastInterpolatedPoint();
-  virtual cnr_interpolator_interface::InterpolationTrajectoryConstPtr getTrajectory();
+  virtual cnr_interpolator_interface::InterpolationPointConstPtr getLastInterpolatedPoint() const;
+  virtual cnr_interpolator_interface::InterpolationTrajectoryConstPtr getTrajectory() const;
 
   void setSplineOrder(const unsigned int& order);
 };
