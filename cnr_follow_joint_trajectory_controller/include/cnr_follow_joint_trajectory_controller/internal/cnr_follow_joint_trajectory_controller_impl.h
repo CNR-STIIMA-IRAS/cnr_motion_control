@@ -15,9 +15,10 @@
 #include <cnr_interpolator_interface/cnr_interpolator_trajectory.h>
 
 #include <cnr_regulator_interface/cnr_regulator_state.h>
-#include <cnr_regulator_interface/cnr_regulator_options.h>
-#include <cnr_regulator_interface/cnr_regulator_inputs.h>
-#include <cnr_regulator_interface/cnr_regulator_outputs.h>
+#include <cnr_regulator_interface/cnr_regulator_params.h>
+#include <cnr_regulator_interface/cnr_regulator_references.h>
+#include <cnr_regulator_interface/cnr_regulator_feedback.h>
+#include <cnr_regulator_interface/cnr_regulator_control_commands.h>
 
 namespace cnr
 {
@@ -84,17 +85,18 @@ bool FollowJointTrajectoryController<H,T>::doInit()
     auto reg = m_regulator_loader.createInstance(regulator);
     m_regulator = cnr_controller_interface::to_std_ptr( reg );
     
-    cnr_regulator_interface::JointRegulatorOptionsPtr opts( new cnr_regulator_interface::JointRegulatorOptions() );
+    cnr_regulator_interface::JointRegulatorParamsPtr opts( new cnr_regulator_interface::JointRegulatorParams() );
     opts->logger    = this->m_logger;
     opts->period    = ros::Duration(this->m_sampling_period);
     opts->dim       = this->nAx();
-    opts->robot_kin = this->m_kin;
+    opts->robot_kin = this->m_rkin;
+    opts->interpolator = m_interpolator;
     if(!m_regulator->initialize(this->getRootNh(), this->getControllerNh(), opts))
     {
       CNR_RETURN_FALSE(*this->logger(), "The regulator init failed. Abort.")
     }
-    m_regulator_input .reset(new cnr_regulator_interface::JointRegulatorInput(this->m_kin->nAx()));
-    m_regulator_output.reset(new cnr_regulator_interface::JointRegulatorOutput(this->m_kin->nAx()));
+    m_r .reset(new cnr_regulator_interface::JointRegulatorReference(this->m_rkin->nAx()));
+    m_u.reset(new cnr_regulator_interface::JointRegulatorControlCommand(this->m_rkin->nAx()));
 
   }
   catch(pluginlib::PluginlibException& ex)
@@ -107,14 +109,14 @@ bool FollowJointTrajectoryController<H,T>::doInit()
   {
     goal_tolerance = 0.001;
   }
-  m_regulator_input->set_goal_tolerance(goal_tolerance);
+  m_r->set_goal_tolerance(goal_tolerance);
 
   double path_tolerance;
   if(!this->getControllerNh().getParam("path_tolerance", path_tolerance))
   {
      path_tolerance = 0.001;
   }
-  m_regulator_input->set_path_tolerance(path_tolerance);
+  m_r->set_path_tolerance(path_tolerance);
 
   m_as.reset(new actionlib::ActionServer<control_msgs::FollowJointTrajectoryAction>(
                     this->getControllerNh(),
@@ -141,11 +143,11 @@ bool FollowJointTrajectoryController<H,T>::doStarting(const ros::Time& time)
   cnr_interpolator_interface::JointTrajectoryPtr trj(new cnr_interpolator_interface::JointTrajectory({pnt}) );
   m_interpolator->setTrajectory(trj);
   
-  m_regulator_state0.reset(new cnr_regulator_interface::JointRegulatorState( ) );
-  m_regulator_state0->setRobotState( *this->m_state );
+  m_x0.reset(new cnr_regulator_interface::JointRegulatorState( ) );
+  m_x0->setRobotState( *this->m_rstate );
   
-  m_regulator->starting(m_regulator_state0, ros::Time::now());
-  m_regulator_input->set_target_override(1.0);
+  m_regulator->starting(m_x0, ros::Time::now());
+  m_r->set_target_override(1.0);
 
   m_as->start();
   CNR_RETURN_TRUE(*this->logger());
@@ -157,22 +159,22 @@ bool FollowJointTrajectoryController<H,T>::doUpdate(const ros::Time& time, const
   CNR_TRACE_START_THROTTLE_DEFAULT(this->logger());
   try
   {
-    m_regulator_input->set_target_override(this->getTargetOverride());
-    m_regulator_input->set_period(period);
-    m_regulator->update(m_interpolator, m_regulator_input, m_regulator_output);
+    m_r->set_target_override(this->getTargetOverride());
+    m_r->set_period(period);
+    m_regulator->update(m_r, m_u);
 
-    m_is_in_tolerance = m_regulator_output->get_in_goal_tolerance();
+    m_is_in_tolerance = m_u->get_in_goal_tolerance();
 
-    this->setCommandPosition     (m_regulator_output->get_q());
-    this->setCommandVelocity     (m_regulator_output->get_qd());
-    this->setCommandAcceleration (m_regulator_output->get_qdd());
-    this->setCommandEffort       (m_regulator_output->get_effort());
+    this->setCommandPosition     (m_u->get_q());
+    this->setCommandVelocity     (m_u->get_qd());
+    this->setCommandAcceleration (m_u->get_qdd());
+    this->setCommandEffort       (m_u->get_effort());
 
     std_msgs::Float64Ptr msg(new std_msgs::Float64());
-    msg->data = m_regulator_output->get_scaling();
+    msg->data = m_u->get_scaling();
     this->publish(m_scaled_time_pub_idx, msg);
 
-    m_is_in_tolerance = m_regulator_output->get_in_goal_tolerance();
+    m_is_in_tolerance = m_u->get_in_goal_tolerance();
 
     sensor_msgs::JointStatePtr js_msg(new sensor_msgs::JointState());
     js_msg->name = this->jointNames();
@@ -180,9 +182,9 @@ bool FollowJointTrajectoryController<H,T>::doUpdate(const ros::Time& time, const
     js_msg->velocity.resize(this->nAx());
     js_msg->effort.resize(this->nAx(), 0);
 
-    Eigen::VectorXd::Map(&js_msg->position[0], this->nAx()) = m_regulator_output->get_q();
-    Eigen::VectorXd::Map(&js_msg->velocity[0], this->nAx()) = m_regulator_output->get_qd();
-    Eigen::VectorXd::Map(&js_msg->effort  [0], this->nAx()) = m_regulator_output->get_effort();
+    Eigen::VectorXd::Map(&js_msg->position[0], this->nAx()) = m_u->get_q();
+    Eigen::VectorXd::Map(&js_msg->velocity[0], this->nAx()) = m_u->get_qd();
+    Eigen::VectorXd::Map(&js_msg->effort  [0], this->nAx()) = m_u->get_effort();
     js_msg->header.stamp  = ros::Time::now();
     this->publish(m_target_pub_idx, js_msg);
 
@@ -331,7 +333,7 @@ void FollowJointTrajectoryController<H,T>::actionGoalCallback(
   {
     std::lock_guard<std::mutex> lock(m_mtx);
     m_interpolator->setTrajectory(interp_trj);
-    m_regulator->starting(m_regulator_state0, ros::Time::now());
+    m_regulator->starting(m_x0, ros::Time::now());
     CNR_DEBUG(*this->logger(), "Starting managing new goal");
     std::stringstream ss1; ss1 << "[ "; for(const auto & q  : interp_trj->trj->points.front().positions ) ss1 << std::to_string( q ) << " "; ss1 << "]";
     std::stringstream ss2; ss2 << "[ "; for(const auto & qd : interp_trj->trj->points.front().velocities ) ss2 << std::to_string( qd ) << " ";  ss2 << "]";

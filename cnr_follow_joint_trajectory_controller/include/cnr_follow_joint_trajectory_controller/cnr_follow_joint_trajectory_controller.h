@@ -45,7 +45,7 @@
 
 #include <cnr_controller_interface/cnr_joint_command_controller_interface.h>
 #include <cnr_interpolator_interface/cnr_interpolator_interface.h>
-#include <cnr_regulator_interface/cnr_regulator_base.h>
+#include <cnr_regulator_interface/internal/cnr_regulator_base.h>
 
 namespace cnr
 {
@@ -76,10 +76,10 @@ protected:
   std::shared_ptr<InterpolatorInterface> m_interpolator;
 
   pluginlib::ClassLoader<cnr_regulator_interface::BaseRegulator> m_regulator_loader;
-  std::shared_ptr<cnr_regulator_interface::BaseRegulator> m_regulator;
-  cnr_regulator_interface::JointRegulatorStatePtr  m_regulator_state0;
-  cnr_regulator_interface::JointRegulatorInputPtr  m_regulator_input;
-  cnr_regulator_interface::JointRegulatorOutputPtr m_regulator_output;
+  std::shared_ptr<cnr_regulator_interface::BaseRegulator>  m_regulator;
+  cnr_regulator_interface::JointRegulatorStatePtr          m_x0;
+  cnr_regulator_interface::JointRegulatorReferencePtr      m_r;
+  cnr_regulator_interface::JointRegulatorControlCommandPtr m_u;
 
 
   int m_is_finished;
