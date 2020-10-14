@@ -13,28 +13,38 @@ namespace cnr_interpolator_interface
 /**
  * @brief The InterpolationInput struct
  */
-struct InterpolationInput
+class InterpolationInput
 {
-  InterpolationInput() : time(0.0), override(1.0) {}
+private:
+  ros::Duration time_;
+  double override_;
+public:
+  InterpolationInput() : time_(0.0), override_(1.0) {}
   virtual ~InterpolationInput() = default;
   InterpolationInput(const InterpolationInput&) = delete;
   InterpolationInput& operator=(const InterpolationInput&) = delete;
   InterpolationInput(InterpolationInput&&) = delete;
   InterpolationInput& operator=(InterpolationInput&&) = delete;
 
-  ros::Duration time;
-  double override;
+  const ros::Duration& time() const {return time_; }
+  const double& override() const {return override_; }
+  ros::Duration& time() {return time_; }
+  double& override() {return override_; }
+
 };
 typedef std::shared_ptr<InterpolationInput> InterpolationInputPtr;
-typedef const std::shared_ptr<InterpolationInput const > InterpolationInputConstPtr;
+typedef std::shared_ptr<InterpolationInput const> InterpolationInputConstPtr;
 
 
 
 /**
  * @brief The JointInput struct
  */
-struct JointInput : public cnr_interpolator_interface::InterpolationInput
+class JointInput : public cnr_interpolator_interface::InterpolationInput
 {
+private:
+  trajectory_msgs::JointTrajectoryPoint pnt_;
+public:
   JointInput() = default;
   virtual ~JointInput() = default;
   JointInput(const JointInput&) = delete;
@@ -42,10 +52,11 @@ struct JointInput : public cnr_interpolator_interface::InterpolationInput
   JointInput(JointInput&&) = delete;
   JointInput& operator=(JointInput&&) = delete;
 
-  trajectory_msgs::JointTrajectoryPoint pnt;
+  const trajectory_msgs::JointTrajectoryPoint& pnt() const { return pnt_; };
+  trajectory_msgs::JointTrajectoryPoint& pnt() { return pnt_; };
 };
 typedef std::shared_ptr<JointInput> JointInputPtr;
-typedef const std::shared_ptr<JointInput const > JointInputConstPtr;
+typedef std::shared_ptr<JointInput const > JointInputConstPtr;
 
 
 
@@ -63,7 +74,7 @@ struct CartesianInput : public cnr_interpolator_interface::InterpolationInput
 
 };
 typedef std::shared_ptr<CartesianInput> CartesianInputPtr;
-typedef const std::shared_ptr<CartesianInput const > CartesianInputConstPtr;
+typedef std::shared_ptr<CartesianInput const > CartesianInputConstPtr;
 
 
 }  // namespace cnr_interpolator_interface

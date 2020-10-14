@@ -13,8 +13,7 @@
 namespace thor
 {
 
-
-class CartesianLookaheadPrefilter : public cnr_interpolator_interface::InterpolatorInterface
+class CartesianLookaheadPrefilter : public cnr_interpolator_interface::CartesianInterpolatorInterface
 {
 public:
 
@@ -25,21 +24,17 @@ public:
   CartesianLookaheadPrefilter(CartesianLookaheadPrefilter&&) = delete;
   CartesianLookaheadPrefilter& operator=(CartesianLookaheadPrefilter&&) = delete;
 
-  virtual bool initialize(cnr_logger::TraceLoggerPtr logger,
-                          ros::NodeHandle& nh,
-                          cnr_interpolator_interface::InterpolationTrajectoryPtr trj = nullptr);
+  virtual bool initialize(cnr_logger::TraceLoggerPtr logger, 
+                          ros::NodeHandle&            controller_nh,
+                          cnr_interpolator_interface::InterpolationTrajectoryPtr  trj = nullptr) override;
 
-  virtual bool setTrajectory(cnr_interpolator_interface::InterpolationTrajectoryPtr trj);
-  virtual bool appendToTrajectory(cnr_interpolator_interface::InterpolationPointConstPtr point);
-  virtual bool interpolate(cnr_interpolator_interface::InterpolationInputConstPtr input,
-                           cnr_interpolator_interface::InterpolationOutputPtr     output);
-
-  virtual const ros::Duration& trjTime() const;
-  virtual cnr_interpolator_interface::InterpolationPointConstPtr getLastInterpolatedPoint();
-  virtual cnr_interpolator_interface::InterpolationTrajectoryConstPtr getTrajectory();
+  virtual bool setTrajectory(cnr_interpolator_interface::InterpolationTrajectoryPtr trj) override;
+  virtual bool appendToTrajectory(cnr_interpolator_interface::InterpolationPointConstPtr point) override;
+  virtual bool interpolate(cnr_interpolator_interface::InterpolationInputConstPtr input, 
+                           cnr_interpolator_interface::InterpolationOutputPtr output) override;
+  virtual cnr_interpolator_interface::InterpolationPointConstPtr getLastInterpolatedPoint() const override;
 
 private:
-  cnr_interpolator_interface::CartesianTrajectoryPtr m_trj;
   cnr_interpolator_interface::CartesianPointPtr m_last_interpolated_point;
 
 };

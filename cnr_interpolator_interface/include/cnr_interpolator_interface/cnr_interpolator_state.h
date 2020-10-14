@@ -23,7 +23,7 @@ struct InterpolationState
   InterpolationState& operator=(InterpolationState&&) = delete;
 };
 typedef std::shared_ptr<InterpolationState> InterpolationStatePtr;
-typedef const std::shared_ptr<InterpolationState const > InterpolationStateConstPtr;
+typedef std::shared_ptr<InterpolationState const > InterpolationStateConstPtr;
 
 
 
@@ -40,7 +40,7 @@ struct JointState : public cnr_interpolator_interface::InterpolationState
   JointState& operator=(JointState&&) = delete;
 };
 typedef std::shared_ptr<JointState> JointStatePtr;
-typedef const std::shared_ptr<JointState const > JointStateConstPtr;
+typedef std::shared_ptr<JointState const > JointStateConstPtr;
 
 
 
@@ -58,7 +58,7 @@ struct CartesianState : public cnr_interpolator_interface::InterpolationState
 
 };
 typedef std::shared_ptr<CartesianState> CartesianStatePtr;
-typedef const std::shared_ptr<CartesianState const > CartesianStateConstPtr;
+typedef std::shared_ptr<CartesianState const > CartesianStateConstPtr;
 
 
 }  // namespace cnr_interpolator_interface

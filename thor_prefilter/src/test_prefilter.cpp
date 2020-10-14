@@ -35,8 +35,8 @@ int main(int argc, char **argv)
     ROS_INFO("Time = %f", t);
     cnr_interpolator_interface::JointInputPtr input(new cnr_interpolator_interface::JointInput());
     cnr_interpolator_interface::JointOutputPtr output(new cnr_interpolator_interface::JointOutput());
-    input->time = ros::Duration(t);
-    input->override = 1.0;
+    input->time() = ros::Duration(t);
+    input->override() = 1.0;
     if (!prefilter.interpolate(input, output))
     {
       ROS_WARN("Something wrong");

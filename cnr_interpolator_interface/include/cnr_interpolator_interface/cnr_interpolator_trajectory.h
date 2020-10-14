@@ -30,7 +30,7 @@ struct InterpolationTrajectory
   }
 };
 typedef std::shared_ptr<InterpolationTrajectory> InterpolationTrajectoryPtr;
-typedef const std::shared_ptr<InterpolationTrajectory const > InterpolationTrajectoryConstPtr;
+typedef std::shared_ptr<InterpolationTrajectory const > InterpolationTrajectoryConstPtr;
 
 /**
  * @brief The JointTrajectory struct
@@ -73,7 +73,7 @@ struct JointTrajectory : public cnr_interpolator_interface::InterpolationTraject
 };
 
 typedef std::shared_ptr<JointTrajectory> JointTrajectoryPtr;
-typedef const std::shared_ptr<JointTrajectory const > JointTrajectoryConstPtr;
+typedef std::shared_ptr<JointTrajectory const > JointTrajectoryConstPtr;
 
 
 
@@ -111,7 +111,7 @@ struct CartesianTrajectory : public cnr_interpolator_interface::InterpolationTra
   std::vector< CartesianPoint > trj;
 };
 typedef std::shared_ptr<CartesianTrajectory> CartesianTrajectoryPtr;
-typedef const std::shared_ptr<CartesianTrajectory const > CartesianTrajectoryConstPtr;
+typedef std::shared_ptr<CartesianTrajectory const > CartesianTrajectoryConstPtr;
 
 
 

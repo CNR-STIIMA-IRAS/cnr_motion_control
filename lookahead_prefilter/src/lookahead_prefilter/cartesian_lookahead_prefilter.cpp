@@ -1,7 +1,10 @@
+#include <vector>
+#include <cnr_logger/cnr_logger.h>
+#include <cnr_interpolator_interface/cnr_interpolator_interface.h>
 #include <lookahead_prefilter/cartesian_lookahead_prefilter.h>
 #include <pluginlib/class_list_macros.h> // header for PLUGINLIB_EXPORT_CLASS. NOTE IT SHOULD STAY IN THE CPP FILE NOTE
 
-PLUGINLIB_EXPORT_CLASS(thor::CartesianLookaheadPrefilter, cnr_interpolator_interface::InterpolatorInterface)
+PLUGINLIB_EXPORT_CLASS(thor::CartesianLookaheadPrefilter, cnr_interpolator_interface::InterpolatorBase)
 
 using cnr_interpolator_interface::InterpolatorInterface;
 
@@ -22,7 +25,7 @@ bool CartesianLookaheadPrefilter::initialize(cnr_logger::TraceLoggerPtr logger,
                                              ros::NodeHandle& nh,
                                              cnr_interpolator_interface::InterpolationTrajectoryPtr trj)
 {
-  if(!InterpolatorInterface::initialize(logger, nh, trj))
+  if(!cnr_interpolator_interface::CartesianInterpolatorInterface::initialize(logger, nh, trj))
   {
     return false;
   }
@@ -38,50 +41,45 @@ bool CartesianLookaheadPrefilter::initialize(cnr_logger::TraceLoggerPtr logger,
 bool CartesianLookaheadPrefilter::interpolate(cnr_interpolator_interface::InterpolationInputConstPtr input,
                                               cnr_interpolator_interface::InterpolationOutputPtr output)
 {
-  CartesianInputConstPtr in   = std::dynamic_pointer_cast<CartesianInput const>( input );
-  CartesianOutputPtr     out  = std::dynamic_pointer_cast<CartesianOutput>     ( output );
-  CartesianTrajectoryPtr ctrj = std::dynamic_pointer_cast<CartesianTrajectory> ( m_trj );
-
-  if (!ctrj)
+  CNR_TRACE_START_THROTTLE(this->logger(), 5.0);
+  if(!cnr_interpolator_interface::CartesianInterpolatorInterface::interpolate(input,output))
   {
-    CNR_RETURN_FALSE(*m_logger, "Trajectory is not set");
+    CNR_RETURN_FALSE(this->logger());
+  }
+  std::vector< CartesianPoint >& points = trj()->trj;
+
+  if (points.size() == 0)
+  {
+    CNR_RETURN_FALSE(this->logger());
   }
 
-  if (!out)
+
+  if((in()->time() - points.at(0).time_from_start).toSec() < 0)
   {
-    CNR_RETURN_FALSE(*m_logger, "The dynamic cast failed, the function parameter seems to be not a CartesianOutputPtr");
+    out()->pnt.x = points.at(0).x;
+    out()->pnt.twist = Eigen::Vector6d::Zero();
+    out()->pnt.twistd = Eigen::Vector6d::Zero();
+    CNR_RETURN_FALSE(this->logger());
   }
 
-  std::vector< CartesianPoint >& trj = ctrj->trj;
-
-  if (trj.size() == 0)
-    return false;
-
-  if ((in->time - trj.at(0).time_from_start).toSec() < 0)
+  if ((in()->time() - points.back().time_from_start).toSec() >= 0)
   {
-    out->pnt.x = trj.at(0).x;
-    out->pnt.twist = Eigen::Vector6d::Zero();
-    out->pnt.twistd = Eigen::Vector6d::Zero();
-    return false;
+    out()->pnt = points.back();
+    CNR_RETURN_TRUE_THROTTLE(this->logger(), 5.0, "Query Time: " +std::to_string(in()->time().toSec()) 
+                                          + ", time from start: " + std::to_string(points.back().time_from_start.toSec()));
   }
 
-  if ((in->time - trj.back().time_from_start).toSec() >= 0)
+  for (unsigned int iPnt = 1; iPnt < points.size(); iPnt++)
   {
-    out->pnt = trj.back();
-    return true;
-  }
-
-  for (unsigned int iPnt = 1; iPnt < trj.size(); iPnt++)
-  {
-    if (((in->time - trj.at(iPnt).time_from_start).toSec() < 0) && ((in->time - trj.at(iPnt - 1).time_from_start).toSec() >= 0))
+    if (((in()->time() - points.at(iPnt).time_from_start).toSec() < 0) && ((in()->time() - points.at(iPnt - 1).time_from_start).toSec() >= 0))
     {
-      out->pnt.time_from_start = in->time;
-      double delta_time = std::max(1.0e-6, (trj.at(iPnt).time_from_start - trj.at(iPnt - 1).time_from_start).toSec());
-      double t          = (in->time - trj.at(iPnt - 1).time_from_start).toSec();
+      out()->pnt.time_from_start = in()->time();
+      double delta_time = std::max(1.0e-6, (points.at(iPnt).time_from_start - points.at(iPnt - 1).time_from_start).toSec());
+      double t          = (in()->time() - points.at(iPnt - 1).time_from_start).toSec();
       double ratio      = t / delta_time;
 
-      Eigen::Affine3d T_0_1 =trj.at(iPnt - 1).x;
-      Eigen::Affine3d T_0_2 =trj.at(iPnt).x;
+      Eigen::Affine3d T_0_1 =points.at(iPnt - 1).x;
+      Eigen::Affine3d T_0_2 =points.at(iPnt).x;
 
       // T_0_2 = Q_0 T_0_1 --> Q_0 = T_0_2 * T_0_1.inverse()
       Eigen::Affine3d Q_from_1_to_2_in_0 = T_0_2 * T_0_1.inverse();
@@ -95,73 +93,46 @@ bool CartesianLookaheadPrefilter::interpolate(cnr_interpolator_interface::Interp
       Q_from_1_to_t_in_0.translation() = Dx_from_1_to_t_in_0;
       Q_from_1_to_t_in_0.linear() = aa_from_1_to_t_in_0.toRotationMatrix();
 
-      out->pnt.x = Q_from_1_to_t_in_0 * T_0_1;
-      out->pnt.twist.head(3) = in->override * Dx_from_1_to_2_in_0 / delta_time;
-      out->pnt.twist.tail(3) = in->override * aa_from_1_to_2_in_0.axis() * aa_from_1_to_2_in_0.angle() / delta_time;
-      out->pnt.twistd = Eigen::Vector6d::Zero();
+      out()->pnt.x = Q_from_1_to_t_in_0 * T_0_1;
+      out()->pnt.twist.head(3) = in()->override() * Dx_from_1_to_2_in_0 / delta_time;
+      out()->pnt.twist.tail(3) = in()->override() * aa_from_1_to_2_in_0.axis() * aa_from_1_to_2_in_0.angle() / delta_time;
+      out()->pnt.twistd = Eigen::Vector6d::Zero();
 
-      *m_last_interpolated_point = out->pnt;
-      return true;
+      *m_last_interpolated_point = out()->pnt;
+      CNR_RETURN_TRUE_THROTTLE_DEFAULT(this->logger());
     }
   }
-  return false;
+  CNR_RETURN_FALSE(this->logger());
 }
 
 
-bool CartesianLookaheadPrefilter::setTrajectory(cnr_interpolator_interface::InterpolationTrajectoryPtr trj)
+bool CartesianLookaheadPrefilter::setTrajectory(cnr_interpolator_interface::InterpolationTrajectoryPtr _trj)
 {
-  CNR_TRACE_START(*m_logger);
-  if(!trj)
+  CNR_TRACE_START(m_logger);
+  if(!cnr_interpolator_interface::CartesianInterpolatorInterface::setTrajectory(_trj))
   {
     CNR_RETURN_FALSE(*m_logger, "Trajectory is not set");
   }
-  if(m_trj)
-    m_trj.reset();
 
-  m_trj = std::dynamic_pointer_cast<CartesianTrajectory>(trj);
-  if(m_trj)
-  {
-    CNR_RETURN_FALSE(*m_logger, "Error in casting the pointer. Abort.");
-  }
-  bool ret = !(m_trj->isEmpty());
-  if(ret)
-  {
-    m_last_interpolated_point.reset( new CartesianPoint() );
-    *m_last_interpolated_point =m_trj->trj.front();
-  }
-  CNR_RETURN_BOOL(*m_logger, ret);
+  m_last_interpolated_point.reset( new CartesianPoint() );
+  *m_last_interpolated_point =trj()->trj.front();
+  CNR_RETURN_TRUE(m_logger);
 }
-
 
 
 bool CartesianLookaheadPrefilter::appendToTrajectory(cnr_interpolator_interface::InterpolationPointConstPtr point)
 {
-  CNR_TRACE_START(*m_logger);
-  bool ret = m_trj->append(point);
-  CNR_RETURN_BOOL(*m_logger, ret);
+  CNR_TRACE_START(m_logger);
+  if(!cnr_interpolator_interface::CartesianInterpolatorInterface::appendToTrajectory(point))
+  {
+    CNR_RETURN_FALSE(m_logger, "Error in appending the points");
+  }
+  CNR_RETURN_TRUE(m_logger);
 }
 
-const ros::Duration& CartesianLookaheadPrefilter::trjTime() const
-{
-  static ros::Duration default_duration(0);
-  if(m_trj)
-  {
-    return m_trj->trjTime();
-  }
-  else
-  {
-    return default_duration;
-  }
-}
-
-
-cnr_interpolator_interface::InterpolationPointConstPtr CartesianLookaheadPrefilter::getLastInterpolatedPoint()
+cnr_interpolator_interface::InterpolationPointConstPtr CartesianLookaheadPrefilter::getLastInterpolatedPoint() const
 {
   return m_last_interpolated_point;
-}
-cnr_interpolator_interface::InterpolationTrajectoryConstPtr CartesianLookaheadPrefilter::getTrajectory()
-{
-  return m_trj;
 }
 
 

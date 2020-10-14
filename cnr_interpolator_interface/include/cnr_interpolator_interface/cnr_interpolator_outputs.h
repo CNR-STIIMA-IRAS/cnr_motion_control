@@ -24,7 +24,7 @@ struct InterpolationOutput
 };
 
 typedef std::shared_ptr<InterpolationOutput> InterpolationOutputPtr;
-typedef const std::shared_ptr<InterpolationOutput const > InterpolationOutputConstPtr;
+typedef std::shared_ptr<InterpolationOutput const > InterpolationOutputConstPtr;
 
 
 /**
@@ -43,7 +43,7 @@ struct JointOutput : public cnr_interpolator_interface::InterpolationOutput
 };
 
 typedef std::shared_ptr<JointOutput> JointOutputPtr;
-typedef const std::shared_ptr<JointOutput const > JointOutputConstPtr;
+typedef std::shared_ptr<JointOutput const > JointOutputConstPtr;
 
 
 
@@ -64,7 +64,7 @@ struct CartesianOutput : public cnr_interpolator_interface::InterpolationOutput
 };
 
 typedef std::shared_ptr<CartesianOutput> CartesianOutputPtr;
-typedef const std::shared_ptr<CartesianOutput const > CartesianOutputConstPtr;
+typedef std::shared_ptr<CartesianOutput const > CartesianOutputConstPtr;
 
 
 

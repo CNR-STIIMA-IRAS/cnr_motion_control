@@ -36,7 +36,7 @@ FollowJointTrajectoryController<H,T>::~FollowJointTrajectoryController()
 
 template<class H, class T>
 FollowJointTrajectoryController<H,T>::FollowJointTrajectoryController()
-  : m_interpolator_loader("cnr_interpolator_interface", "cnr_interpolator_interface::InterpolatorInterface")
+  : m_interpolator_loader("cnr_interpolator_interface", "cnr_interpolator_interface::InterpolatorBase")
   , m_regulator_loader("cnr_regulator_interface", "cnr_regulator_interface::BaseRegulator")
 {
   m_is_in_tolerance = false;
@@ -47,13 +47,12 @@ FollowJointTrajectoryController<H,T>::FollowJointTrajectoryController()
   m_scaled_time_pub_idx = this->template add_publisher<std_msgs::Float64>("scaled_time_pub", 1);
   m_target_pub_idx      = this->template add_publisher<sensor_msgs::JointState>("/target/joint_states", 1);
   //--------------------------
-
 }
 
 template<class H, class T>
 bool FollowJointTrajectoryController<H,T>::doInit()
 {
-  CNR_TRACE_START(*this->logger());
+  CNR_TRACE_START(this->logger());
 
   std::string interpolator;
   if(!this->getControllerNh().getParam("interpolator", interpolator))
@@ -125,13 +124,13 @@ bool FollowJointTrajectoryController<H,T>::doInit()
                     boost::bind(&FollowJointTrajectoryController<H,T>::actionCancelCallback, this, _1),
                     false));
 
-  CNR_RETURN_TRUE(*this->logger());
+  CNR_RETURN_TRUE(this->logger());
 }
 
 template<class H, class T>
 bool FollowJointTrajectoryController<H,T>::doStarting(const ros::Time& time)
 {
-  CNR_TRACE_START(*this->logger());
+  CNR_TRACE_START(this->logger());
 
   trajectory_msgs::JointTrajectoryPoint pnt;
   pnt.time_from_start = ros::Duration(0.0);
@@ -150,7 +149,7 @@ bool FollowJointTrajectoryController<H,T>::doStarting(const ros::Time& time)
   m_r->set_target_override(1.0);
 
   m_as->start();
-  CNR_RETURN_TRUE(*this->logger());
+  CNR_RETURN_TRUE(this->logger());
 }
 
 template<class H, class T>
@@ -193,22 +192,22 @@ bool FollowJointTrajectoryController<H,T>::doUpdate(const ros::Time& time, const
   {
     CNR_ERROR(*this->logger(), "Got and exception: '" << e.what()
                << "'(function input: Time: " << time.toSec() << " Duration: " << period.toSec() << ")" );
-    //CNR_RETURN_FALSE(*this->logger());
+    //CNR_RETURN_FALSE(this->logger());
   }
-  CNR_RETURN_TRUE_THROTTLE_DEFAULT(*this->logger());
+  CNR_RETURN_TRUE_THROTTLE_DEFAULT(this->logger());
 }
 
 template<class H, class T>
 bool FollowJointTrajectoryController<H,T>::doStopping(const ros::Time& time)
 {
-  CNR_TRACE_START(*this->logger());
+  CNR_TRACE_START(this->logger());
   if (m_gh)
   {
     m_gh->setCanceled();
   }
   joinActionServerThread();
   m_gh.reset();
-  CNR_RETURN_TRUE(*this->logger());
+  CNR_RETURN_TRUE(this->logger());
 }
 
 template<class H, class T>
@@ -286,7 +285,7 @@ template<class H, class T>
 void FollowJointTrajectoryController<H,T>::actionGoalCallback(
                                     actionlib::ActionServer<control_msgs::FollowJointTrajectoryAction>::GoalHandle gh)
 {
-  CNR_TRACE_START(*this->logger());
+  CNR_TRACE_START(this->logger());
   CNR_INFO(*this->logger(), "Received a goal");
   auto goal = gh.getGoal();
 
@@ -358,7 +357,7 @@ template<class H, class T>
 void FollowJointTrajectoryController<H,T>::actionCancelCallback(
                                   actionlib::ActionServer< control_msgs::FollowJointTrajectoryAction >::GoalHandle gh)
 {
-  CNR_TRACE_START(*this->logger());
+  CNR_TRACE_START(this->logger());
   CNR_DEBUG(*this->logger(), "Cancel active goal Callback");
   if (m_gh)
   {

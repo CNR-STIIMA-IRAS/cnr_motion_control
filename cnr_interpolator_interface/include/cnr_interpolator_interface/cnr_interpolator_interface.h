@@ -10,6 +10,7 @@
 #include <cnr_interpolator_interface/cnr_interpolator_outputs.h>
 #include <cnr_interpolator_interface/cnr_interpolator_point.h>
 #include <cnr_interpolator_interface/cnr_interpolator_trajectory.h>
+#include <cnr_interpolator_interface/internal/cnr_interpolator_base.h>
 
 namespace cnr_interpolator_interface
 {
@@ -17,17 +18,17 @@ namespace cnr_interpolator_interface
 /**
  * @brief The InterpolatorInterface class
  */
-class InterpolatorInterface
+template<class TRJ, class PNT, class IN, class OUT>
+class InterpolatorInterface : public InterpolatorBase
 {
-private:
-  ros::NodeHandle  m_controller_nh;
-  ros::Duration    m_starting_duration;
-  ros::Duration    m_interpolator_time;
-  bool             m_new_trajectory_interpolation_started;
 protected:
-  cnr_logger::TraceLoggerPtr m_logger;
 
-  ros::NodeHandle& getControllerNh() { return m_controller_nh;}
+  std::shared_ptr<TRJ const>  trj( ) const { return std::dynamic_pointer_cast<TRJ const>(m_trj); }
+  std::shared_ptr<TRJ      >  trj( )       { return std::dynamic_pointer_cast<TRJ      >(m_trj); }
+  std::shared_ptr<IN  const>  in ( ) const { return std::dynamic_pointer_cast<IN  const>(m_in ); }
+  //std::shared_ptr<IN       >  in ( )       { return std::dynamic_pointer_cast<IN       >(m_in ); }
+  std::shared_ptr<OUT const>  out( ) const { return std::dynamic_pointer_cast<OUT const>(m_out); }
+  std::shared_ptr<OUT      >  out( )       { return std::dynamic_pointer_cast<OUT      >(m_out); }
 
 public:
   InterpolatorInterface() = default;
@@ -37,62 +38,35 @@ public:
   InterpolatorInterface(InterpolatorInterface&&) = delete;
   InterpolatorInterface& operator=(InterpolatorInterface&&) = delete;
 
-  virtual bool initialize(cnr_logger::TraceLoggerPtr logger,
+  virtual bool initialize(cnr_logger::TraceLoggerPtr logger, 
                           ros::NodeHandle&            controller_nh,
-                          InterpolationTrajectoryPtr  trj = nullptr);
+                          InterpolationTrajectoryPtr  trj = nullptr) override;
 
-  virtual bool setTrajectory(InterpolationTrajectoryPtr trj)
-  {
-    if(!trj)
-    {
-      CNR_RETURN_FALSE(*m_logger, "Trajectory is not set");
-    }
-    m_starting_duration = ros::Duration(0);
-    m_new_trajectory_interpolation_started = false;
-    CNR_RETURN_TRUE(*m_logger);
-  }
-
-  virtual bool appendToTrajectory(InterpolationPointConstPtr /*point*/)
-  {
-    return false;
-  }
-
-  virtual const ros::Duration& trjTime() const
-  {
-    static ros::Duration ret = ros::Duration(0);
-    return ret;
-  }
-
-  virtual bool interpolate(InterpolationInputConstPtr input, InterpolationOutputPtr /*output*/)
-  {
-    if(m_new_trajectory_interpolation_started)
-    {
-      m_new_trajectory_interpolation_started = true;
-      m_starting_duration = input->time;
-    }
-    m_interpolator_time = input->time - m_starting_duration;
-    return true;
-
-  }
-  virtual InterpolationPointConstPtr getLastInterpolatedPoint() const
-  {
-    return nullptr;
-  }
-
-  virtual InterpolationTrajectoryConstPtr getTrajectory() const
-  {
-    return nullptr;
-  }
-
-  virtual const ros::Duration& interpolatorTime() const
-  {
-    return m_interpolator_time;
-  }
+  virtual bool setTrajectory(InterpolationTrajectoryPtr trj) override;
+  virtual bool appendToTrajectory(InterpolationPointConstPtr point) override;
+  virtual const ros::Duration& trjTime() const override;
+  virtual bool interpolate(InterpolationInputConstPtr input, InterpolationOutputPtr output) override;
+  virtual InterpolationPointConstPtr getLastInterpolatedPoint() const override;
 };
 
-typedef std::shared_ptr<cnr_interpolator_interface::InterpolatorInterface> InterpolatorInterfacePtr;
-typedef const std::shared_ptr<cnr_interpolator_interface::InterpolatorInterface const> InterpolatorInterfaceConstPtr;
+typedef InterpolatorInterface<cnr_interpolator_interface::JointTrajectory,
+                              cnr_interpolator_interface::JointPoint,
+                              cnr_interpolator_interface::JointInput,
+                              cnr_interpolator_interface::JointOutput >  JointInterpolatorInterface;
+
+typedef std::shared_ptr<cnr_interpolator_interface::JointInterpolatorInterface> JointInterpolatorBasePtr;
+typedef std::shared_ptr<cnr_interpolator_interface::JointInterpolatorInterface const> JointInterpolatorInterfaceConstPtr;
+
+typedef InterpolatorInterface<cnr_interpolator_interface::CartesianTrajectory,
+                              cnr_interpolator_interface::CartesianPoint,
+                              cnr_interpolator_interface::CartesianInput,
+                              cnr_interpolator_interface::CartesianOutput >  CartesianInterpolatorInterface;
+
+typedef std::shared_ptr<cnr_interpolator_interface::CartesianInterpolatorInterface> CartesianInterpolatorBasePtr;
+typedef std::shared_ptr<cnr_interpolator_interface::CartesianInterpolatorInterface const> CartesianInterpolatorInterfaceConstPtr;
 
 }  // namespace cnr_interpolator_interface
+
+#include <cnr_interpolator_interface/internal/cnr_interpolator_interface_impl.h>
 
 #endif  // CNR_INTERPOLATOR_INTERFACE__CNR_INTERPOLATOR_INTERFACE__H

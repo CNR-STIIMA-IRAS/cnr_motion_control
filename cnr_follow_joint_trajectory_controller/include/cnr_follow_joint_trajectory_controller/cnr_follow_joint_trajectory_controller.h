@@ -52,7 +52,7 @@ namespace cnr
 namespace control
 {
 
-using cnr_interpolator_interface::InterpolatorInterface;
+using cnr_interpolator_interface::InterpolatorBase;
 
 template<class H, class T>
 class FollowJointTrajectoryController : public cnr_controller_interface::JointCommandController<H,T>
@@ -72,8 +72,8 @@ protected:
   void actionGoalCallback(actionlib::ActionServer<control_msgs::FollowJointTrajectoryAction>::GoalHandle gh);
   void actionCancelCallback(actionlib::ActionServer<control_msgs::FollowJointTrajectoryAction>::GoalHandle gh);
 
-  pluginlib::ClassLoader<InterpolatorInterface> m_interpolator_loader;
-  std::shared_ptr<InterpolatorInterface> m_interpolator;
+  pluginlib::ClassLoader<InterpolatorBase> m_interpolator_loader;
+  std::shared_ptr<InterpolatorBase> m_interpolator;
 
   pluginlib::ClassLoader<cnr_regulator_interface::BaseRegulator> m_regulator_loader;
   std::shared_ptr<cnr_regulator_interface::BaseRegulator>  m_regulator;

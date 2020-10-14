@@ -22,7 +22,7 @@ struct InterpolationPoint
 };
 
 typedef std::shared_ptr<InterpolationPoint> InterpolationPointPtr;
-typedef const std::shared_ptr<InterpolationPoint const > InterpolationPointConstPtr;
+typedef std::shared_ptr<InterpolationPoint const > InterpolationPointConstPtr;
 
 
 /**
@@ -41,7 +41,7 @@ struct JointPoint : public cnr_interpolator_interface::InterpolationPoint
 };
 
 typedef std::shared_ptr<JointPoint> JointPointPtr;
-typedef const std::shared_ptr<JointPoint const > JointPointConstPtr;
+typedef std::shared_ptr<JointPoint const > JointPointConstPtr;
 
 
 /**
@@ -63,7 +63,7 @@ struct CartesianPoint : public cnr_interpolator_interface::InterpolationPoint
 };
 
 typedef std::shared_ptr<CartesianPoint> CartesianPointPtr;
-typedef const std::shared_ptr<CartesianPoint const > CartesianPointConstPtr;
+typedef std::shared_ptr<CartesianPoint const > CartesianPointConstPtr;
 
 
 
