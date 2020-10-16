@@ -53,7 +53,6 @@ bool CartesianLookaheadPrefilter::interpolate(cnr_interpolator_interface::Interp
     CNR_RETURN_FALSE(this->logger());
   }
 
-
   if((in()->time() - points.at(0).time_from_start).toSec() < 0)
   {
     out()->pnt.x = points.at(0).x;
@@ -69,7 +68,7 @@ bool CartesianLookaheadPrefilter::interpolate(cnr_interpolator_interface::Interp
                                           + ", time from start: " + std::to_string(points.back().time_from_start.toSec()));
   }
 
-  for (unsigned int iPnt = 1; iPnt < points.size(); iPnt++)
+  for(unsigned int iPnt = 1; iPnt < points.size(); iPnt++)
   {
     if (((in()->time() - points.at(iPnt).time_from_start).toSec() < 0) && ((in()->time() - points.at(iPnt - 1).time_from_start).toSec() >= 0))
     {

@@ -28,10 +28,10 @@ namespace control
 template<class H, class T>
 FollowJointTrajectoryController<H,T>::~FollowJointTrajectoryController()
 {
-  CNR_DEBUG(*this->logger(), "Destroying Thor Prefilter Controller");
+  CNR_DEBUG(this->logger(), "Destroying Thor Prefilter Controller");
   joinActionServerThread();
   m_as.reset();
-  CNR_DEBUG(*this->logger(), "Destroyed Thor Prefilter Controller");
+  CNR_DEBUG(this->logger(), "Destroyed Thor Prefilter Controller");
 }
 
 template<class H, class T>
@@ -57,7 +57,7 @@ bool FollowJointTrajectoryController<H,T>::doInit()
   std::string interpolator;
   if(!this->getControllerNh().getParam("interpolator", interpolator))
   {
-    CNR_RETURN_FALSE(*this->logger(),"The param '"+this->getControllerNamespace()+"/interpolator' is missing. Abort.")
+    CNR_RETURN_FALSE(this->logger(),"The param '"+this->getControllerNamespace()+"/interpolator' is missing. Abort.")
   }
   try
   {
@@ -65,19 +65,19 @@ bool FollowJointTrajectoryController<H,T>::doInit()
     m_interpolator = cnr_controller_interface::to_std_ptr( interp );
     if(!m_interpolator->initialize(this->logger(), this->getControllerNh()) )
     {
-      CNR_RETURN_FALSE(*this->logger(), "The interpolator init failed. Abort.")
+      CNR_RETURN_FALSE(this->logger(), "The interpolator init failed. Abort.")
     }
   }
   catch(pluginlib::PluginlibException& ex)
   {
-    CNR_RETURN_FALSE(*this->logger(), "The plugin failed to load for some reason. Error: " + std::string(ex.what()));
+    CNR_RETURN_FALSE(this->logger(), "The plugin failed to load for some reason. Error: " + std::string(ex.what()));
   }
 
 
   std::string regulator;
   if(!this->getControllerNh().getParam("regulator", regulator))
   {
-    CNR_RETURN_FALSE(*this->logger(), "The param '"+this->getControllerNamespace()+"/regulator' is missing. Abort.")
+    CNR_RETURN_FALSE(this->logger(), "The param '"+this->getControllerNamespace()+"/regulator' is missing. Abort.")
   }
   try
   {
@@ -92,7 +92,7 @@ bool FollowJointTrajectoryController<H,T>::doInit()
     opts->interpolator = m_interpolator;
     if(!m_regulator->initialize(this->getRootNh(), this->getControllerNh(), opts))
     {
-      CNR_RETURN_FALSE(*this->logger(), "The regulator init failed. Abort.")
+      CNR_RETURN_FALSE(this->logger(), "The regulator init failed. Abort.")
     }
     m_r .reset(new cnr_regulator_interface::JointRegulatorReference(this->m_rkin->nAx()));
     m_u.reset(new cnr_regulator_interface::JointRegulatorControlCommand(this->m_rkin->nAx()));
@@ -100,7 +100,7 @@ bool FollowJointTrajectoryController<H,T>::doInit()
   }
   catch(pluginlib::PluginlibException& ex)
   {
-    CNR_RETURN_FALSE(*this->logger(), "The plugin failed to load for some reason. Error: " + std::string(ex.what()));
+    CNR_RETURN_FALSE(this->logger(), "The plugin failed to load for some reason. Error: " + std::string(ex.what()));
   }
 
   double goal_tolerance;
@@ -190,7 +190,7 @@ bool FollowJointTrajectoryController<H,T>::doUpdate(const ros::Time& time, const
   }
   catch (std::exception& e)
   {
-    CNR_ERROR(*this->logger(), "Got and exception: '" << e.what()
+    CNR_ERROR(this->logger(), "Got and exception: '" << e.what()
                << "'(function input: Time: " << time.toSec() << " Duration: " << period.toSec() << ")" );
     //CNR_RETURN_FALSE(this->logger());
   }
@@ -225,14 +225,15 @@ bool FollowJointTrajectoryController<H,T>::joinActionServerThread()
 template<class H, class T>
 void FollowJointTrajectoryController<H,T>::actionServerThread()
 {
-  CNR_DEBUG(*this->logger(), "START ACTION GOAL LOOPING");
+  std::stringstream report;
+  CNR_DEBUG(this->logger(), "START ACTION GOAL LOOPING");
   ros::WallRate lp(100);
   while (ros::ok())
   {
     lp.sleep();
     if (!m_gh)
     {
-      CNR_ERROR(*this->logger(), "Goal handle is not initialized");
+      CNR_ERROR(this->logger(), "Goal handle is not initialized");
       break;
     }
 
@@ -240,26 +241,29 @@ void FollowJointTrajectoryController<H,T>::actionServerThread()
     || (m_gh->getGoalStatus().status == actionlib_msgs::GoalStatus::RECALLED) 
     || (m_gh->getGoalStatus().status == actionlib_msgs::GoalStatus::PREEMPTED))
     {
-      CNR_WARN(*this->logger(), "Action Server Thread Preempted");
-      CNR_DEBUG(*this->logger(), "(m_gh->getGoalStatus().status == actionlib_msgs::GoalStatus::PREEMPTED)  = "
+      CNR_WARN(this->logger(), "Action Server Thread Preempted");
+      CNR_DEBUG(this->logger(), "(m_gh->getGoalStatus().status == actionlib_msgs::GoalStatus::PREEMPTED)  = "
                 << (int)(m_gh->getGoalStatus().status == actionlib_msgs::GoalStatus::PREEMPTED));
-      CNR_DEBUG(*this->logger(), "m_preempted  = %d" << (int)m_preempted);
-      CNR_DEBUG(*this->logger(), "(m_gh->getGoalStatus().status == actionlib_msgs::GoalStatus::RECALLED)  = "
+      CNR_DEBUG(this->logger(), "m_preempted  = %d" << (int)m_preempted);
+      CNR_DEBUG(this->logger(), "(m_gh->getGoalStatus().status == actionlib_msgs::GoalStatus::RECALLED)  = "
                 << (int)(m_gh->getGoalStatus().status == actionlib_msgs::GoalStatus::RECALLED));
-      this->add_diagnostic_message((m_preempted ? "preempted" : "cancelled"), "INTERPOLATOR", "OK", true);
+
+      this->addDiagnosticsMessage((m_preempted ? "preempted" : "cancelled"), "INTERPOLATOR", "OK", &report);
+      CNR_INFO(this->logger(), report.str() );
 
       control_msgs::FollowJointTrajectoryResult result;
       result.error_code = 0;
       result.error_string = "preempted";
       m_gh->setRejected(result);
-      CNR_DEBUG(*this->logger(), "Preempted old goal DONE");
+      CNR_DEBUG(this->logger(), "Preempted old goal DONE");
 
       break;
     }
 
     if(m_is_finished == 1 || m_is_in_tolerance)
     {
-      this->add_diagnostic_message("Goal tolerance achieved!", "INTERPOLATOR", "OK", true);
+      this->addDiagnosticsMessage("Goal tolerance achieved!", "INTERPOLATOR", "OK", &report);
+      CNR_INFO(this->logger(), report.str() );
 
       control_msgs::FollowJointTrajectoryResult result;
       m_gh->setSucceeded(result);
@@ -272,13 +276,15 @@ void FollowJointTrajectoryController<H,T>::actionServerThread()
       result.error_code = -4;
       result.error_string = "Some problem occurs";
 
-      this->add_diagnostic_message("Some problem occurs", "INTERPOLATOR", "ERROR", true);
+      this->addDiagnosticsMessage("Some problem occurs", "INTERPOLATOR", "ERROR", &report);
+      CNR_ERROR(this->logger(), report.str() );
+
       m_gh->setAborted(result);
       break;
     }
   }
   m_gh.reset();
-  CNR_DEBUG(*this->logger(), "START ACTION GOAL END");
+  CNR_DEBUG(this->logger(), "START ACTION GOAL END");
 }
 
 template<class H, class T>
@@ -286,7 +292,7 @@ void FollowJointTrajectoryController<H,T>::actionGoalCallback(
                                     actionlib::ActionServer<control_msgs::FollowJointTrajectoryAction>::GoalHandle gh)
 {
   CNR_TRACE_START(this->logger());
-  CNR_INFO(*this->logger(), "Received a goal");
+  CNR_INFO(this->logger(), "Received a goal");
   auto goal = gh.getGoal();
 
   boost::shared_ptr<actionlib::ActionServer<control_msgs::FollowJointTrajectoryAction>::GoalHandle> current_gh;
@@ -294,15 +300,15 @@ void FollowJointTrajectoryController<H,T>::actionGoalCallback(
   if (m_gh)
   {
     // PREEMPTED OLD GOAL
-    CNR_INFO(*this->logger(), "preempting old goal");
+    CNR_INFO(this->logger(), "preempting old goal");
     m_gh->setAborted();
     joinActionServerThread();
 
-    CNR_INFO(*this->logger(), "Goal Stopped");
+    CNR_INFO(this->logger(), "Goal Stopped");
   }
   else
   {
-    CNR_INFO(*this->logger(), "No goals running yet");
+    CNR_INFO(this->logger(), "No goals running yet");
   }
 
   current_gh.reset(new actionlib::ActionServer<control_msgs::FollowJointTrajectoryAction>::GoalHandle(gh));
@@ -311,7 +317,7 @@ void FollowJointTrajectoryController<H,T>::actionGoalCallback(
 
   if (nPnt == 0)
   {
-    CNR_DEBUG(*this->logger(),"TRAJECTORY WITH NO POINT");
+    CNR_DEBUG(this->logger(),"TRAJECTORY WITH NO POINT");
     control_msgs::FollowJointTrajectoryResult result;
     m_gh->setAccepted();
     current_gh->setSucceeded(result);
@@ -322,7 +328,7 @@ void FollowJointTrajectoryController<H,T>::actionGoalCallback(
   cnr_interpolator_interface::JointTrajectoryPtr interp_trj(new cnr_interpolator_interface::JointTrajectory());
   if (!trajectory_processing::sort_trajectory(this->jointNames(), goal->trajectory, *interp_trj->trj))
   {
-    CNR_ERROR(*this->logger(), "Names are different");
+    CNR_ERROR(this->logger(), "Names are different");
     m_gh->setAborted();
     joinActionServerThread();
     return;
@@ -333,15 +339,15 @@ void FollowJointTrajectoryController<H,T>::actionGoalCallback(
     std::lock_guard<std::mutex> lock(m_mtx);
     m_interpolator->setTrajectory(interp_trj);
     m_regulator->starting(m_x0, ros::Time::now());
-    CNR_DEBUG(*this->logger(), "Starting managing new goal");
+    CNR_DEBUG(this->logger(), "Starting managing new goal");
     std::stringstream ss1; ss1 << "[ "; for(const auto & q  : interp_trj->trj->points.front().positions ) ss1 << std::to_string( q ) << " "; ss1 << "]";
     std::stringstream ss2; ss2 << "[ "; for(const auto & qd : interp_trj->trj->points.front().velocities ) ss2 << std::to_string( qd ) << " ";  ss2 << "]";
-    CNR_DEBUG(*this->logger(), "First Point of the trajectory:\n q : " + ss1.str() + "\n" + " qd:" + ss2.str() );
+    CNR_DEBUG(this->logger(), "First Point of the trajectory:\n q : " + ss1.str() + "\n" + " qd:" + ss2.str() );
     m_is_finished=0;
   }
   catch(std::exception& e)
   {
-     CNR_ERROR(*this->logger(), "Set Trajectory Failed");
+     CNR_ERROR(this->logger(), "Set Trajectory Failed");
   }
 
   m_gh->setAccepted();
@@ -350,7 +356,7 @@ void FollowJointTrajectoryController<H,T>::actionGoalCallback(
 
   m_as_thread = std::thread(&FollowJointTrajectoryController<H,T>::actionServerThread, this);
 
-  CNR_RETURN_OK(*this->logger(), void() );
+  CNR_RETURN_OK(this->logger(), void() );
 }
 
 template<class H, class T>
@@ -358,7 +364,7 @@ void FollowJointTrajectoryController<H,T>::actionCancelCallback(
                                   actionlib::ActionServer< control_msgs::FollowJointTrajectoryAction >::GoalHandle gh)
 {
   CNR_TRACE_START(this->logger());
-  CNR_DEBUG(*this->logger(), "Cancel active goal Callback");
+  CNR_DEBUG(this->logger(), "Cancel active goal Callback");
   if (m_gh)
   {
     m_gh->setCanceled();
@@ -375,14 +381,14 @@ void FollowJointTrajectoryController<H,T>::actionCancelCallback(
     }
     catch(std::exception& e)
     {
-      CNR_ERROR(*this->logger(), "Set Trajectory Failed. Exception:" << std::string(e.what()) );
+      CNR_ERROR(this->logger(), "Set Trajectory Failed. Exception:" << std::string(e.what()) );
     }
   }
   else
   {
-    CNR_WARN(*this->logger(), "No goal to cancel");
+    CNR_WARN(this->logger(), "No goal to cancel");
   }
-  CNR_RETURN_OK(*this->logger(), void());
+  CNR_RETURN_OK(this->logger(), void());
 }
 
 }  // namespace control

@@ -102,6 +102,7 @@ template<class TRJ, class PNT, class IN, class OUT>
 InterpolationPointConstPtr InterpolatorInterface<TRJ,PNT,IN,OUT>::getLastInterpolatedPoint() const
 {
   assert(0);
+  return nullptr;
 }
 
 

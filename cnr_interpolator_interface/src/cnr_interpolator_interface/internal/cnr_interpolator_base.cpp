@@ -86,6 +86,7 @@ bool InterpolatorBase::interpolate(InterpolationInputConstPtr input, Interpolati
   CNR_RETURN_TRUE_THROTTLE_DEFAULT(this->logger());
 
 }
+
 InterpolationPointConstPtr InterpolatorBase::getLastInterpolatedPoint() const
 {
   return nullptr;

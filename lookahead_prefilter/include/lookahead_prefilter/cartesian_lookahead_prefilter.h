@@ -25,7 +25,7 @@ public:
   CartesianLookaheadPrefilter& operator=(CartesianLookaheadPrefilter&&) = delete;
 
   virtual bool initialize(cnr_logger::TraceLoggerPtr logger, 
-                          ros::NodeHandle&            controller_nh,
+                          ros::NodeHandle&           controller_nh,
                           cnr_interpolator_interface::InterpolationTrajectoryPtr  trj = nullptr) override;
 
   virtual bool setTrajectory(cnr_interpolator_interface::InterpolationTrajectoryPtr trj) override;
