@@ -1,10 +1,13 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(cnr_interpolator_interface)
 
-set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
 
 find_package(catkin REQUIRED COMPONENTS
   cnr_logger
@@ -21,15 +24,15 @@ catkin_package(
  INCLUDE_DIRS include
  LIBRARIES cnr_interpolator_interface
  CATKIN_DEPENDS cnr_logger roscpp trajectory_msgs rosdyn_core
- DEPENDS
+ DEPENDS Eigen3
 )
 
 include_directories( include ${catkin_INCLUDE_DIRS} ${Eigen3_INCLUDE_DIRS} )
 
-## Declare a C++ library
 add_library(${PROJECT_NAME} src/${PROJECT_NAME}/internal/cnr_interpolator_base.cpp )
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} Eigen3::Eigen)
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-Ofast -funroll-loops -msse2")
+target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Werror $<$<CONFIG:RELEASE>:-Ofast>)
 
 #############
 ## Install ##

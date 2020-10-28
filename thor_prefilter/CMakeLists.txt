@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.1)
 project(thor_prefilter)
 
-set(CMAKE_BUILD_TYPE Debug)
+if(NOT CMAKE_BUILD_TYPE)
+set(CMAKE_BUILD_TYPE Release)
+endif()
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-
-add_compile_options(-funroll-loops -Wall -Ofast)
 
 find_package(catkin REQUIRED COMPONENTS
   eigen_conversions
@@ -31,17 +32,13 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_library(${PROJECT_NAME}
-  src/${PROJECT_NAME}/thor_prefilter.cpp
-)
+add_library(${PROJECT_NAME} src/${PROJECT_NAME}/thor_prefilter.cpp )
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Werror $<$<CONFIG:RELEASE>:-Ofast>)
 
 add_executable(test_prefilter src/test_prefilter.cpp)
 add_dependencies(test_prefilter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(test_prefilter
-  ${PROJECT_NAME}
-  ${catkin_LIBRARIES}
-)
+target_link_libraries(test_prefilter ${PROJECT_NAME}  ${catkin_LIBRARIES} )
 
 install(TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

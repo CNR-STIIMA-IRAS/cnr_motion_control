@@ -1,12 +1,14 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(lookahead_prefilter)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+
 find_package(catkin REQUIRED COMPONENTS
   rosdyn_core
   cnr_interpolator_interface
@@ -14,10 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
 )
 
-## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
 find_package(Eigen3 REQUIRED)
-
 
 catkin_package(
   INCLUDE_DIRS include
@@ -41,8 +40,8 @@ include_directories(
 # Declare a C++ library
 add_library(${PROJECT_NAME}   src/${PROJECT_NAME}/cartesian_lookahead_prefilter.cpp )
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Eigen3_LIBRARIES} )
-set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-Ofast -funroll-loops -msse2")
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} Eigen3::Eigen)
+target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Werror $<$<CONFIG:RELEASE>:-Ofast>)
 
 #############
 ## Install ##

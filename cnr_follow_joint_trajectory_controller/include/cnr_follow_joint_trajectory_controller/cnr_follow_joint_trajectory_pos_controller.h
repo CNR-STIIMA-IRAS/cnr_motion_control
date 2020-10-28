@@ -54,18 +54,15 @@ namespace cnr
 namespace control
 {
 
-class FollowJointTrajectoryPosController :
-    public FollowJointTrajectoryController<hardware_interface::JointHandle, hardware_interface::PositionJointInterface>
+using _FollowJointTrajectoryController = FollowJointTrajectoryController<hardware_interface::JointHandle, 
+                                                                         hardware_interface::PositionJointInterface>;
+
+class FollowJointTrajectoryPosController : public _FollowJointTrajectoryController
 {
 public:
-
-  bool doInit()
+  FollowJointTrajectoryPosController( )
   {
-    CNR_TRACE_START(*m_logger);
     this->setPriority(Q_PRIORITY);
-    bool ret = FollowJointTrajectoryController<hardware_interface::JointHandle, 
-                                               hardware_interface::PositionJointInterface>::doInit();
-    CNR_RETURN_BOOL(*m_logger, ret);
   }
 };
 

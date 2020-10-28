@@ -248,7 +248,7 @@ void FollowJointTrajectoryController<H,T>::actionServerThread()
       CNR_DEBUG(this->logger(), "(m_gh->getGoalStatus().status == actionlib_msgs::GoalStatus::RECALLED)  = "
                 << (int)(m_gh->getGoalStatus().status == actionlib_msgs::GoalStatus::RECALLED));
 
-      this->addDiagnosticsMessage((m_preempted ? "preempted" : "cancelled"), "INTERPOLATOR", "OK", &report);
+      this->addDiagnosticsMessage("OK", (m_preempted ? "preempted" : "cancelled"), {{"Interpolator", "Cancelled"}}, &report);
       CNR_INFO(this->logger(), report.str() );
 
       control_msgs::FollowJointTrajectoryResult result;
@@ -262,7 +262,7 @@ void FollowJointTrajectoryController<H,T>::actionServerThread()
 
     if(m_is_finished == 1 || m_is_in_tolerance)
     {
-      this->addDiagnosticsMessage("Goal tolerance achieved!", "INTERPOLATOR", "OK", &report);
+      this->addDiagnosticsMessage("OK", "£", {{"INTERPOLATOR", "Goal tolerance achieved!"}} , &report);
       CNR_INFO(this->logger(), report.str() );
 
       control_msgs::FollowJointTrajectoryResult result;
@@ -276,7 +276,7 @@ void FollowJointTrajectoryController<H,T>::actionServerThread()
       result.error_code = -4;
       result.error_string = "Some problem occurs";
 
-      this->addDiagnosticsMessage("Some problem occurs", "INTERPOLATOR", "ERROR", &report);
+      this->addDiagnosticsMessage("ERROR", "£", {{"INTERPOLATOR", "Some problem occurs"}}, &report);
       CNR_ERROR(this->logger(), report.str() );
 
       m_gh->setAborted(result);
