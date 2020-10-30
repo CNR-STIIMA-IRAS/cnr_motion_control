@@ -16,7 +16,6 @@ using cnr_interpolator_interface::CartesianTrajectory;
 using cnr_interpolator_interface::CartesianPointConstPtr;
 using cnr_interpolator_interface::CartesianInputConstPtr;
 using cnr_interpolator_interface::CartesianOutputPtr;
-using cnr_interpolator_interface::CartesianTrajectoryPtr;
 
 namespace thor
 {
@@ -64,8 +63,6 @@ bool CartesianLookaheadPrefilter::interpolate(cnr_interpolator_interface::Interp
   if ((in()->time() - points.back().time_from_start).toSec() >= 0)
   {
     out()->pnt = points.back();
-    // CNR_RETURN_TRUE_THROTTLE(this->logger(), 5.0, "Query Time: " +std::to_string(in()->time().toSec()) 
-    //                                       + ", time from start: " + std::to_string(points.back().time_from_start.toSec()));
   }
 
   for(unsigned int iPnt = 1; iPnt < points.size(); iPnt++)
@@ -101,7 +98,7 @@ bool CartesianLookaheadPrefilter::interpolate(cnr_interpolator_interface::Interp
       CNR_RETURN_TRUE_THROTTLE_DEFAULT(this->logger());
     }
   }
-  CNR_RETURN_FALSE(this->logger());
+  CNR_RETURN_TRUE_THROTTLE_DEFAULT(this->logger());
 }
 
 
