@@ -5,7 +5,7 @@ if(NOT CMAKE_BUILD_TYPE)
 set(CMAKE_BUILD_TYPE Release)
 endif()
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -34,11 +34,16 @@ include_directories(
 
 add_library(${PROJECT_NAME} src/${PROJECT_NAME}/thor_prefilter.cpp )
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Werror $<$<CONFIG:RELEASE>:-Ofast>)
+target_compile_options(${PROJECT_NAME} PUBLIC -Wall -faligned-new $<$<CONFIG:RELEASE>:-Ofast>)
+#target_compile_definitions(${PROJECT_NAME} PUBLIC -DEIGEN_DONT_VECTORIZE=1)
+#target_precompile_headers(${PROJECT_NAME} PUBLIC  <Eigen/Dense>
+#                                                  <ros/node_handle.h>
+#                                                  <trajectory_msgs/JointTrajectory.h>)
 
 add_executable(test_prefilter src/test_prefilter.cpp)
 add_dependencies(test_prefilter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(test_prefilter ${PROJECT_NAME}  ${catkin_LIBRARIES} )
+#target_compile_definitions(test_prefilter PUBLIC -DEIGEN_DONT_VECTORIZE=1)
 
 install(TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

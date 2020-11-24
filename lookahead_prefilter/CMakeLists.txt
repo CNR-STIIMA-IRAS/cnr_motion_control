@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(lookahead_prefilter)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -41,7 +41,14 @@ include_directories(
 add_library(${PROJECT_NAME}   src/${PROJECT_NAME}/cartesian_lookahead_prefilter.cpp )
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} Eigen3::Eigen)
-target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Werror $<$<CONFIG:RELEASE>:-Ofast>)
+target_compile_options(${PROJECT_NAME} PUBLIC -Wall $<$<CONFIG:RELEASE>:-Ofast>)
+#target_compile_definitions(${PROJECT_NAME} PUBLIC -DEIGEN_DONT_VECTORIZE=1)
+#target_precompile_headers(${PROJECT_NAME} PUBLIC  <Eigen/Dense>
+#                                                  <vector>
+#                                                  <Eigen/StdVector>
+#                                                  <ros/node_handle.h>
+#                                                  <trajectory_msgs/JointTrajectory.h>
+#                                                  <rosdyn_core/spacevect_algebra.h>)
 
 #############
 ## Install ##

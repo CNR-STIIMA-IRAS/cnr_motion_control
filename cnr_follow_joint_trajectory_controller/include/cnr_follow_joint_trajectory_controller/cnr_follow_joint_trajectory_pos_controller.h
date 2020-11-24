@@ -36,17 +36,6 @@
 #define CNR_FOLLOW_JOINT_TRAJECTORY_CONTROLLER_CNR_FOLLOW_JOINT_TRAJECTORY_POS_CONTROLLER__H
 
 
-#include <actionlib/server/action_server.h>
-#include <control_msgs/FollowJointTrajectoryAction.h>
-#include <ros/ros.h>
-#include <ros/callback_queue.h>
-#include <diagnostic_msgs/DiagnosticArray.h>
-#include <thread>
-#include <mutex>
-#include <std_msgs/Int64.h>
-#include <std_msgs/Float64.h>
-#include <hardware_interface/joint_command_interface.h>
-#include <cnr_controller_interface/cnr_joint_command_controller_interface.h>
 #include <cnr_follow_joint_trajectory_controller/cnr_follow_joint_trajectory_controller.h>
 
 namespace cnr

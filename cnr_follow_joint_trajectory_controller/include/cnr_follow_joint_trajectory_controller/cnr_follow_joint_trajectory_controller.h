@@ -37,11 +37,12 @@
 
 #include <mutex>
 #include <memory>
+#include <boost/shared_ptr.hpp>
 
 #include <ros/ros.h>
 #include <actionlib/server/action_server.h>
-#include <control_msgs/FollowJointTrajectoryAction.h>
 #include <pluginlib/class_loader.h>
+#include <control_msgs/FollowJointTrajectoryAction.h>
 
 #include <cnr_controller_interface/cnr_joint_command_controller_interface.h>
 #include <cnr_interpolator_interface/cnr_interpolator_interface.h>
