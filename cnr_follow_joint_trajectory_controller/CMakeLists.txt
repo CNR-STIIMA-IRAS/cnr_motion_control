@@ -48,6 +48,8 @@ target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${EIGEN_LIBRARIES})
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_compile_options(${PROJECT_NAME} PUBLIC -Wall $<$<CONFIG:RELEASE>:-Ofast> )
 #target_compile_definitions(${PROJECT_NAME} PUBLIC -DEIGEN_DONT_VECTORIZE=1)
+
+if(${CMAKE_VERSION} VERSION_GREATER "3.16.0")
 target_precompile_headers(${PROJECT_NAME} PUBLIC <mutex>
                                                 <memory>
                                                 <boost/shared_ptr.hpp>
@@ -61,6 +63,7 @@ target_precompile_headers(${PROJECT_NAME} PUBLIC <mutex>
                                                 <std_msgs/Int64.h>
                                                 <std_msgs/Float64.h>
                                                 <sensor_msgs/JointState.h>)
+endif()
 
 #############
 ## Install ##
