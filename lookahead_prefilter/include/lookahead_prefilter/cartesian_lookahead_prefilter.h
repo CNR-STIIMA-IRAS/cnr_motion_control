@@ -1,12 +1,16 @@
 #ifndef LOOKAHEAD_PREFILTER__LOOKAHEAD_PREFILTER__H
 #define LOOKAHEAD_PREFILTER__LOOKAHEAD_PREFILTER__H
 
-#include <cnr_logger/cnr_logger.h>
-#include <eigen3/Eigen/Dense>
-#include <eigen3/Eigen/StdVector>
-#include <rosdyn_core/spacevect_algebra.h>
-#include <trajectory_msgs/JointTrajectory.h>
+
+#include <Eigen/Dense>
+#include <Eigen/StdVector>
+
 #include <ros/node_handle.h>
+#include <trajectory_msgs/JointTrajectory.h>
+
+#include <rosdyn_core/spacevect_algebra.h>
+
+#include <cnr_logger/cnr_logger.h>
 #include <cnr_interpolator_interface/cnr_interpolator_interface.h>
 
 

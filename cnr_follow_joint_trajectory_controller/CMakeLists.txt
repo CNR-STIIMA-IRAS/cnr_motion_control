@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.1)
 project(cnr_follow_joint_trajectory_controller)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -47,7 +47,20 @@ add_library(${PROJECT_NAME}   src/${PROJECT_NAME}/cnr_follow_joint_trajectory_po
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${EIGEN_LIBRARIES})
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_compile_options(${PROJECT_NAME} PUBLIC -Wall $<$<CONFIG:RELEASE>:-Ofast> )
-
+#target_compile_definitions(${PROJECT_NAME} PUBLIC -DEIGEN_DONT_VECTORIZE=1)
+target_precompile_headers(${PROJECT_NAME} PUBLIC <mutex>
+                                                <memory>
+                                                <boost/shared_ptr.hpp>
+                                                <ros/ros.h>
+                                                <actionlib/server/action_server.h>
+                                                <pluginlib/class_loader.h>
+                                                <pluginlib/class_list_macros.h>
+                                                <control_msgs/FollowJointTrajectoryAction.h>                                                
+                                                <controller_interface/controller_base.h>
+                                                <name_sorting/sort_trajectories.h>
+                                                <std_msgs/Int64.h>
+                                                <std_msgs/Float64.h>
+                                                <sensor_msgs/JointState.h>)
 
 #############
 ## Install ##

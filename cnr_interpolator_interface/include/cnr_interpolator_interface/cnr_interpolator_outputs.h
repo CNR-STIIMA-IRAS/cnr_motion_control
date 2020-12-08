@@ -2,7 +2,7 @@
 #define CNR_INTERPOLATOR_INTERFACE__CNR_INTERPOLATOR_OUTPUTS__H
 
 #include <cnr_logger/cnr_logger.h>
-#include <eigen3/Eigen/Dense>
+#include <Eigen/Dense>
 #include <trajectory_msgs/JointTrajectory.h>
 #include <cnr_interpolator_interface/cnr_interpolator_trajectory.h>
 

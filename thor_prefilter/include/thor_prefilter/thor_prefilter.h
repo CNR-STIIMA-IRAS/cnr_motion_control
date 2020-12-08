@@ -1,9 +1,10 @@
 #ifndef THOR_PREFILTER__THOR_PREFILTER__H
 #define THOR_PREFILTER__THOR_PREFILTER__H
 
-#include <eigen3/Eigen/Dense>
-#include <trajectory_msgs/JointTrajectory.h>
+#include <Eigen/Dense>
 #include <ros/node_handle.h>
+#include <trajectory_msgs/JointTrajectory.h>
+
 #include <cnr_interpolator_interface/cnr_interpolator_interface.h>
 
 namespace thor

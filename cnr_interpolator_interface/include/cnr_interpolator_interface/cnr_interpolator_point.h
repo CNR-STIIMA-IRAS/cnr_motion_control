@@ -2,7 +2,7 @@
 #define CNR_INTERPOLATOR_INTERFACE__CNR_INTERPOLATOR_POINT__H
 
 #include <rosdyn_core/spacevect_algebra.h>
-#include <eigen3/Eigen/Dense>
+#include <Eigen/Dense>
 #include <trajectory_msgs/JointTrajectoryPoint.h>
 
 namespace cnr_interpolator_interface
