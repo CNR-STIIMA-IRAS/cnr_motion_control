@@ -4,44 +4,37 @@
 #include <lookahead_prefilter/cartesian_lookahead_prefilter.h>
 #include <pluginlib/class_list_macros.h> // header for PLUGINLIB_EXPORT_CLASS. NOTE IT SHOULD STAY IN THE CPP FILE NOTE
 
-PLUGINLIB_EXPORT_CLASS(thor::CartesianLookaheadPrefilter, cnr_interpolator_interface::InterpolatorBase)
+PLUGINLIB_EXPORT_CLASS(cnr::control::CartesianLookaheadPrefilter, cnr::control::InterpolatorBase)
 
-using cnr_interpolator_interface::InterpolatorInterface;
 
-using cnr_interpolator_interface::CartesianPoint;
-using cnr_interpolator_interface::CartesianInput;
-using cnr_interpolator_interface::CartesianOutput;
-using cnr_interpolator_interface::CartesianTrajectory;
+namespace cnr
+{
 
-using cnr_interpolator_interface::CartesianPointConstPtr;
-using cnr_interpolator_interface::CartesianInputConstPtr;
-using cnr_interpolator_interface::CartesianOutputPtr;
-
-namespace thor
+namespace control
 {
 
 bool CartesianLookaheadPrefilter::initialize(cnr_logger::TraceLoggerPtr logger,
                                              ros::NodeHandle& nh,
-                                             cnr_interpolator_interface::InterpolationTrajectoryPtr trj)
+                                             InterpolationTrajectoryPtr trj)
 {
-  if(!cnr_interpolator_interface::CartesianInterpolatorInterface::initialize(logger, nh, trj))
+  if(!CartesianInterpolatorInterface::initialize(logger, nh, trj))
   {
     return false;
   }
   int spline_order = 0;
   if( !nh.getParam("spline_order", spline_order ))
   {
-    CNR_ERROR(*m_logger, "The param 'spline_order' is missing. Default value superimposed to 0.");
+    CNR_ERROR(m_logger, "The param 'spline_order' is missing. Default value superimposed to 0.");
     spline_order = 0;
   }
   return true;
 }
 
-bool CartesianLookaheadPrefilter::interpolate(cnr_interpolator_interface::InterpolationInputConstPtr input,
-                                              cnr_interpolator_interface::InterpolationOutputPtr output)
+bool CartesianLookaheadPrefilter::interpolate(InterpolationInputConstPtr input,
+                                              InterpolationOutputPtr output)
 {
   CNR_TRACE_START_THROTTLE(this->logger(), 5.0);
-  if(!cnr_interpolator_interface::CartesianInterpolatorInterface::interpolate(input,output))
+  if(!CartesianInterpolatorInterface::interpolate(input,output))
   {
     CNR_RETURN_FALSE(this->logger());
   }
@@ -102,12 +95,12 @@ bool CartesianLookaheadPrefilter::interpolate(cnr_interpolator_interface::Interp
 }
 
 
-bool CartesianLookaheadPrefilter::setTrajectory(cnr_interpolator_interface::InterpolationTrajectoryPtr _trj)
+bool CartesianLookaheadPrefilter::setTrajectory(InterpolationTrajectoryPtr _trj)
 {
   CNR_TRACE_START(m_logger);
-  if(!cnr_interpolator_interface::CartesianInterpolatorInterface::setTrajectory(_trj))
+  if(!CartesianInterpolatorInterface::setTrajectory(_trj))
   {
-    CNR_RETURN_FALSE(*m_logger, "Trajectory is not set");
+    CNR_RETURN_FALSE(m_logger, "Trajectory is not set");
   }
 
   m_last_interpolated_point.reset( new CartesianPoint() );
@@ -116,20 +109,21 @@ bool CartesianLookaheadPrefilter::setTrajectory(cnr_interpolator_interface::Inte
 }
 
 
-bool CartesianLookaheadPrefilter::appendToTrajectory(cnr_interpolator_interface::InterpolationPointConstPtr point)
+bool CartesianLookaheadPrefilter::appendToTrajectory(InterpolationPointConstPtr point)
 {
   CNR_TRACE_START(m_logger);
-  if(!cnr_interpolator_interface::CartesianInterpolatorInterface::appendToTrajectory(point))
+  if(!CartesianInterpolatorInterface::appendToTrajectory(point))
   {
     CNR_RETURN_FALSE(m_logger, "Error in appending the points");
   }
   CNR_RETURN_TRUE(m_logger);
 }
 
-cnr_interpolator_interface::InterpolationPointConstPtr CartesianLookaheadPrefilter::getLastInterpolatedPoint() const
+InterpolationPointConstPtr CartesianLookaheadPrefilter::getLastInterpolatedPoint() const
 {
   return m_last_interpolated_point;
 }
 
 
-}
+}  // namespace control
+}  // namespace cnr

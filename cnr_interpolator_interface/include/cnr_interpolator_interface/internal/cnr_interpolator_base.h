@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef CNR_INTERPOLATOR_INTERFACE__CNR_INTERPOLATOR_BASE__H
 #define CNR_INTERPOLATOR_INTERFACE__CNR_INTERPOLATOR_BASE__H
 
@@ -13,7 +15,9 @@
 #include <cnr_interpolator_interface/cnr_interpolator_point.h>
 #include <cnr_interpolator_interface/cnr_interpolator_trajectory.h>
 
-namespace cnr_interpolator_interface
+namespace cnr
+{
+namespace control
 {
 
 /**
@@ -31,7 +35,7 @@ protected:
   InterpolationInputConstPtr  m_in;
   InterpolationOutputPtr      m_out;
 
-  cnr_logger::TraceLoggerPtr m_logger;
+  cnr_logger::TraceLoggerPtr  m_logger;
 
   ros::NodeHandle& getControllerNh() { return m_controller_nh;}
 
@@ -57,9 +61,10 @@ public:
   cnr_logger::TraceLoggerPtr& logger() {return m_logger; }
 };
 
-typedef std::shared_ptr<cnr_interpolator_interface::InterpolatorBase> InterpolatorBasePtr;
-typedef std::shared_ptr<cnr_interpolator_interface::InterpolatorBase const> InterpolatorBaseConstPtr;
+typedef std::shared_ptr<InterpolatorBase> InterpolatorBasePtr;
+typedef std::shared_ptr<InterpolatorBase const> InterpolatorBaseConstPtr;
 
-}  // namespace cnr_interpolator_interface
+}  // namespace control
+}  // namespace cnr
 
 #endif  // CNR_INTERPOLATOR_INTERFACE__CNR_INTERPOLATOR_INTERFACE__H

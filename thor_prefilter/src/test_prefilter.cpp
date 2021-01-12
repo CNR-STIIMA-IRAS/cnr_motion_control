@@ -7,7 +7,7 @@ int main(int argc, char **argv)
   ros::NodeHandle nh;
 
   ros::Publisher pub = nh.advertise<trajectory_msgs::JointTrajectoryPoint>("points", 1);
-  thor::ThorPrefilter prefilter;
+  cnr::control::ThorPrefilter prefilter;
   unsigned int nAx = 1;
   double time = 5;
   trajectory_msgs::JointTrajectoryPoint p0;
@@ -24,7 +24,7 @@ int main(int argc, char **argv)
   pf.effort.resize(nAx, 0);
   pf.time_from_start = ros::Duration(time);
 
-  cnr_interpolator_interface::JointTrajectoryPtr ttrj(new cnr_interpolator_interface::JointTrajectory());
+  cnr::control::JointTrajectoryPtr ttrj(new cnr::control::JointTrajectory());
   ttrj->trj->points.push_back(p0);
   ttrj->trj->points.push_back(pf);
 
@@ -33,8 +33,8 @@ int main(int argc, char **argv)
   for (double t = 0; t < 2 * time; t += 0.01)
   {
     ROS_INFO("Time = %f", t);
-    cnr_interpolator_interface::JointInputPtr input(new cnr_interpolator_interface::JointInput());
-    cnr_interpolator_interface::JointOutputPtr output(new cnr_interpolator_interface::JointOutput());
+    cnr::control::JointInputPtr input(new cnr::control::JointInput());
+    cnr::control::JointOutputPtr output(new cnr::control::JointOutput());
     input->time() = ros::Duration(t);
     input->override() = 1.0;
     if (!prefilter.interpolate(input, output))

@@ -53,10 +53,8 @@ namespace cnr
 namespace control
 {
 
-using cnr_interpolator_interface::InterpolatorBase;
-
-template<class H, class T>
-class FollowJointTrajectoryController : public cnr_controller_interface::JointCommandController<H,T>
+template<int N, int MaxN, class H, class T>
+class FollowJointTrajectoryController : public cnr::control::JointCommandController<N, MaxN, H,T>
 {
 public:
   FollowJointTrajectoryController();
@@ -76,11 +74,11 @@ protected:
   pluginlib::ClassLoader<InterpolatorBase> m_interpolator_loader;
   std::shared_ptr<InterpolatorBase> m_interpolator;
 
-  pluginlib::ClassLoader<cnr_regulator_interface::BaseRegulator> m_regulator_loader;
-  std::shared_ptr<cnr_regulator_interface::BaseRegulator>  m_regulator;
-  cnr_regulator_interface::JointRegulatorStatePtr          m_x0;
-  cnr_regulator_interface::JointRegulatorReferencePtr      m_r;
-  cnr_regulator_interface::JointRegulatorControlCommandPtr m_u;
+  pluginlib::ClassLoader<BaseRegulator>   m_regulator_loader;
+  std::shared_ptr<BaseRegulator>          m_regulator;
+  JointRegulatorStatePtr<N,MaxN>          m_x0;
+  JointRegulatorReferencePtr<N,MaxN>      m_r;
+  JointRegulatorControlCommandPtr<N,MaxN> m_u;
 
 
   int m_is_finished;
@@ -95,7 +93,6 @@ protected:
 
   size_t m_scaled_time_pub_idx;
   size_t m_target_pub_idx;
-
 };
 
 }  // namespace control

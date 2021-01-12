@@ -6,8 +6,11 @@
 #include <trajectory_msgs/JointTrajectory.h>
 #include <cnr_interpolator_interface/cnr_interpolator_point.h>
 
-namespace cnr_interpolator_interface
+namespace cnr
 {
+namespace control
+{
+
 
 /**
  * @brief The InterpolationTrajectory struct
@@ -35,7 +38,7 @@ typedef std::shared_ptr<InterpolationTrajectory const > InterpolationTrajectoryC
 /**
  * @brief The JointTrajectory struct
  */
-struct JointTrajectory : public cnr_interpolator_interface::InterpolationTrajectory
+struct JointTrajectory : public InterpolationTrajectory
 {
   JointTrajectory() { trj.reset(new trajectory_msgs::JointTrajectory()); }
   virtual ~JointTrajectory() = default;
@@ -54,7 +57,7 @@ struct JointTrajectory : public cnr_interpolator_interface::InterpolationTraject
     return trj ? trj->points.size() == 0 : false;
   }
 
-  virtual bool append(cnr_interpolator_interface::InterpolationPointConstPtr point)
+  virtual bool append(InterpolationPointConstPtr point)
   {
     if(trj && point)
     {
@@ -81,7 +84,7 @@ typedef std::shared_ptr<JointTrajectory const > JointTrajectoryConstPtr;
 /**
  * @brief The CartesianTrajectory struct
  */
-struct CartesianTrajectory : public cnr_interpolator_interface::InterpolationTrajectory
+struct CartesianTrajectory : public InterpolationTrajectory
 {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -93,7 +96,7 @@ struct CartesianTrajectory : public cnr_interpolator_interface::InterpolationTra
   CartesianTrajectory& operator=(CartesianTrajectory&&) = delete;
 
   virtual bool isEmpty() const { return trj.size() > 0; }
-  virtual bool append( cnr_interpolator_interface::InterpolationPointConstPtr point)
+  virtual bool append( InterpolationPointConstPtr point)
   {
     if(point)
     {
@@ -115,7 +118,7 @@ typedef std::shared_ptr<CartesianTrajectory const > CartesianTrajectoryConstPtr;
 
 
 
-
-}  // namespace cnr_interpolator_interface
+}  // namespace control
+}  // namespace cnr
 
 #endif  // CNR_INTERPOLATOR_INTERFACE__CNR_INTERPOLATOR_INPUTS__H

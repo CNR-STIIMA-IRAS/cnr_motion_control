@@ -6,9 +6,11 @@
 #include <trajectory_msgs/JointTrajectory.h>
 #include <cnr_interpolator_interface/cnr_interpolator_trajectory.h>
 
-namespace cnr_interpolator_interface
-{
 
+namespace cnr
+{
+namespace control
+{
 
 /**
  * @brief The InterpolationState struct
@@ -30,7 +32,7 @@ typedef std::shared_ptr<InterpolationState const > InterpolationStateConstPtr;
 /**
  * @brief The JointState struct
  */
-struct JointState : public cnr_interpolator_interface::InterpolationState
+struct JointState : public InterpolationState
 {
   JointState() = default;
   virtual ~JointState() = default;
@@ -47,7 +49,7 @@ typedef std::shared_ptr<JointState const > JointStateConstPtr;
 /**
  * @brief The CartesianState struct
  */
-struct CartesianState : public cnr_interpolator_interface::InterpolationState
+struct CartesianState : public InterpolationState
 {
   CartesianState() = default;
   virtual ~CartesianState() = default;
@@ -61,6 +63,7 @@ typedef std::shared_ptr<CartesianState> CartesianStatePtr;
 typedef std::shared_ptr<CartesianState const > CartesianStateConstPtr;
 
 
-}  // namespace cnr_interpolator_interface
+}  // namespace control
+}  // namespace cnr
 
 #endif  // CNR_INTERPOLATOR_INTERFACE__CNR_INTERPOLATOR_STATES__H

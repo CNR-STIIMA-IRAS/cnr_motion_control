@@ -1,9 +1,9 @@
 #include <cnr_interpolator_interface/internal/cnr_interpolator_base.h>
 
-
-namespace cnr_interpolator_interface
+namespace cnr
 {
-
+namespace control
+{
 
 bool InterpolatorBase::initialize(cnr_logger::TraceLoggerPtr logger,
                                   ros::NodeHandle&           controller_nh,
@@ -103,5 +103,5 @@ const ros::Duration& InterpolatorBase::interpolatorTime() const
 }
 
 
-
-}  // namespace cnr_interpolator_interface
+}  // namespace control
+}  // namespace cnr

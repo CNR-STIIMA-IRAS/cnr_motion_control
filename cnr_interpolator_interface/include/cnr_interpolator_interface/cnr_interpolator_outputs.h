@@ -6,9 +6,10 @@
 #include <trajectory_msgs/JointTrajectory.h>
 #include <cnr_interpolator_interface/cnr_interpolator_trajectory.h>
 
-namespace cnr_interpolator_interface
+namespace cnr
 {
-
+namespace control
+{
 
 /**
  * @brief The InterpolationOutput struct
@@ -30,7 +31,7 @@ typedef std::shared_ptr<InterpolationOutput const > InterpolationOutputConstPtr;
 /**
  * @brief The JointOutput struct
  */
-struct JointOutput : public cnr_interpolator_interface::InterpolationOutput
+struct JointOutput : public InterpolationOutput
 {
   JointOutput() = default;
   virtual ~JointOutput() = default;
@@ -51,7 +52,7 @@ typedef std::shared_ptr<JointOutput const > JointOutputConstPtr;
 /**
  * @brief The CartesianOutput struct
  */
-struct CartesianOutput : public cnr_interpolator_interface::InterpolationOutput
+struct CartesianOutput : public InterpolationOutput
 {
   CartesianOutput() = default;
   virtual ~CartesianOutput() = default;
@@ -68,6 +69,7 @@ typedef std::shared_ptr<CartesianOutput const > CartesianOutputConstPtr;
 
 
 
-}  // namespace cnr_interpolator_interface
+} // namespace control
+} // namespace cnr
 
 #endif  // CNR_INTERPOLATOR_INTERFACE__CNR_INTERPOLATOR_OUTPUTS__H

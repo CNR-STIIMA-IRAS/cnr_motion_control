@@ -1,3 +1,5 @@
+#pragma once // worksaround qtcreator, clang tidy
+
 #ifndef CNR_INTERPOLATOR_INTERFACE__CNR_INTERPOLATOR_INTERFACE_IMPL__H
 #define CNR_INTERPOLATOR_INTERFACE__CNR_INTERPOLATOR_INTERFACE_IMPL__H
 
@@ -8,8 +10,11 @@
 #include <cnr_logger/cnr_logger.h>
 #include <cnr_interpolator_interface/cnr_interpolator_interface.h>
 
-namespace cnr_interpolator_interface
+namespace cnr
 {
+namespace control
+{
+
 
 /**
  * @brief The InterpolatorInterface class
@@ -17,7 +22,7 @@ namespace cnr_interpolator_interface
 template<class TRJ, class PNT, class IN, class OUT>
 bool InterpolatorInterface<TRJ,PNT,IN,OUT>::initialize(cnr_logger::TraceLoggerPtr logger, ros::NodeHandle&  controller_nh, InterpolationTrajectoryPtr trj)
 {
-  if(!cnr_interpolator_interface::InterpolatorBase::initialize(logger, controller_nh, trj))
+  if(!InterpolatorBase::initialize(logger, controller_nh, trj))
   {
     return false;
   }
@@ -108,5 +113,6 @@ InterpolationPointConstPtr InterpolatorInterface<TRJ,PNT,IN,OUT>::getLastInterpo
 
 
 }  // namespace cnr_interpolator_interface
+}
 
 #endif  // CNR_INTERPOLATOR_INTERFACE__CNR_INTERPOLATOR_INTERFACE_IMPL__H

@@ -5,8 +5,11 @@
 #include <Eigen/Dense>
 #include <trajectory_msgs/JointTrajectoryPoint.h>
 
-namespace cnr_interpolator_interface
+namespace cnr
 {
+namespace control
+{
+
 
 /**
  * @brief The InterpolationPoint struct
@@ -28,7 +31,7 @@ typedef std::shared_ptr<InterpolationPoint const > InterpolationPointConstPtr;
 /**
  * @brief The JointPoint struct
  */
-struct JointPoint : public cnr_interpolator_interface::InterpolationPoint
+struct JointPoint : public InterpolationPoint
 {
   JointPoint() = default;
   virtual ~JointPoint() = default;
@@ -47,7 +50,7 @@ typedef std::shared_ptr<JointPoint const > JointPointConstPtr;
 /**
  * @brief The CartesianPoint struct
  */
-struct CartesianPoint : public cnr_interpolator_interface::InterpolationPoint
+struct CartesianPoint : public InterpolationPoint
 {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -67,6 +70,7 @@ typedef std::shared_ptr<CartesianPoint const > CartesianPointConstPtr;
 
 
 
-}  //  namespace cnr_interpolator_interface
+}  //  namespace control
+}  //  namespace cnr
 
 #endif  // CNR_INTERPOLATOR_INTERFACE__CNR_INTERPOLATOR_POINT__H

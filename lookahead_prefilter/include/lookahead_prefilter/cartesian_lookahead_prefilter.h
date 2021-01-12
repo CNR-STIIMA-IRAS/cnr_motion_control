@@ -13,11 +13,12 @@
 #include <cnr_logger/cnr_logger.h>
 #include <cnr_interpolator_interface/cnr_interpolator_interface.h>
 
-
-namespace thor
+namespace cnr
+{
+namespace control
 {
 
-class CartesianLookaheadPrefilter : public cnr_interpolator_interface::CartesianInterpolatorInterface
+class CartesianLookaheadPrefilter : public CartesianInterpolatorInterface
 {
 public:
 
@@ -30,21 +31,22 @@ public:
 
   virtual bool initialize(cnr_logger::TraceLoggerPtr logger, 
                           ros::NodeHandle&           controller_nh,
-                          cnr_interpolator_interface::InterpolationTrajectoryPtr  trj = nullptr) override;
+                          InterpolationTrajectoryPtr  trj = nullptr) override;
 
-  virtual bool setTrajectory(cnr_interpolator_interface::InterpolationTrajectoryPtr trj) override;
-  virtual bool appendToTrajectory(cnr_interpolator_interface::InterpolationPointConstPtr point) override;
-  virtual bool interpolate(cnr_interpolator_interface::InterpolationInputConstPtr input, 
-                           cnr_interpolator_interface::InterpolationOutputPtr output) override;
-  virtual cnr_interpolator_interface::InterpolationPointConstPtr getLastInterpolatedPoint() const override;
+  virtual bool setTrajectory(InterpolationTrajectoryPtr trj) override;
+  virtual bool appendToTrajectory(InterpolationPointConstPtr point) override;
+  virtual bool interpolate(InterpolationInputConstPtr input,
+                           InterpolationOutputPtr output) override;
+  virtual InterpolationPointConstPtr getLastInterpolatedPoint() const override;
 
 private:
-  cnr_interpolator_interface::CartesianPointPtr m_last_interpolated_point;
+  CartesianPointPtr m_last_interpolated_point;
 
 };
 
-typedef std::shared_ptr<thor::CartesianLookaheadPrefilter> CartesianLookaheadPrefilterPtr;
+typedef std::shared_ptr<CartesianLookaheadPrefilter> CartesianLookaheadPrefilterPtr;
 
-}  // namespace thor
+}  // namespace control
+}  // namespace cnr
 
 #endif  // LOOKAHEAD_PREFILTER__LOOKAHEAD_PREFILTER__H

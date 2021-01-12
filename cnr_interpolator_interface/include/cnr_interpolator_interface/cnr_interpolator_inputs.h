@@ -6,9 +6,10 @@
 #include <trajectory_msgs/JointTrajectory.h>
 #include <cnr_interpolator_interface/cnr_interpolator_trajectory.h>
 
-namespace cnr_interpolator_interface
+namespace cnr
 {
-
+namespace control
+{
 
 /**
  * @brief The InterpolationInput struct
@@ -40,7 +41,7 @@ typedef std::shared_ptr<InterpolationInput const> InterpolationInputConstPtr;
 /**
  * @brief The JointInput struct
  */
-class JointInput : public cnr_interpolator_interface::InterpolationInput
+class JointInput : public InterpolationInput
 {
 private:
   trajectory_msgs::JointTrajectoryPoint pnt_;
@@ -63,7 +64,7 @@ typedef std::shared_ptr<JointInput const > JointInputConstPtr;
 /**
  * @brief The CartesianInput struct
  */
-struct CartesianInput : public cnr_interpolator_interface::InterpolationInput
+struct CartesianInput : public InterpolationInput
 {
   CartesianInput() = default;
   virtual ~CartesianInput() = default;
@@ -77,6 +78,7 @@ typedef std::shared_ptr<CartesianInput> CartesianInputPtr;
 typedef std::shared_ptr<CartesianInput const > CartesianInputConstPtr;
 
 
-}  // namespace cnr_interpolator_interface
+}  // namespace control
+}  // cnr
 
 #endif  // CNR_INTERPOLATOR_INTERFACE__CNR_INTERPOLATOR_INPUTS__H

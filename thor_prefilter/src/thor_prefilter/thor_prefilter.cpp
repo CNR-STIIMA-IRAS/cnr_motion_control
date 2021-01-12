@@ -2,27 +2,11 @@
 #include <thor_prefilter/thor_prefilter.h>
 #include <pluginlib/class_list_macros.h> // header for PLUGINLIB_EXPORT_CLASS. NOTE IT SHOULD STAY IN THE CPP FILE NOTE
 
-PLUGINLIB_EXPORT_CLASS(thor::ThorPrefilter, cnr_interpolator_interface::InterpolatorBase)
+PLUGINLIB_EXPORT_CLASS(cnr::control::ThorPrefilter, cnr::control::InterpolatorBase)
 
-using cnr_interpolator_interface::InterpolatorInterface;
-using cnr_interpolator_interface::InterpolationTrajectoryPtr;
-
-using cnr_interpolator_interface::JointPoint;
-using cnr_interpolator_interface::JointInput;
-using cnr_interpolator_interface::JointOutput;
-using cnr_interpolator_interface::JointTrajectory;
-
-using cnr_interpolator_interface::JointPointPtr;
-using cnr_interpolator_interface::JointInputPtr;
-using cnr_interpolator_interface::JointOutputPtr;
-using cnr_interpolator_interface::JointTrajectoryPtr;
-
-using cnr_interpolator_interface::JointPointConstPtr;
-using cnr_interpolator_interface::JointInputConstPtr;
-using cnr_interpolator_interface::JointOutputConstPtr;
-using cnr_interpolator_interface::JointTrajectoryConstPtr;
-
-namespace thor
+namespace cnr
+{
+namespace control
 {
 
 /**
@@ -34,7 +18,7 @@ namespace thor
  */
 bool ThorPrefilter::initialize(cnr_logger::TraceLoggerPtr logger, ros::NodeHandle& nh, InterpolationTrajectoryPtr trj)
 {
-  if(!cnr_interpolator_interface::JointInterpolatorInterface::initialize(logger, nh, trj) )
+  if(!JointInterpolatorInterface::initialize(logger, nh, trj) )
   {
     return false;
   }
@@ -43,7 +27,7 @@ bool ThorPrefilter::initialize(cnr_logger::TraceLoggerPtr logger, ros::NodeHandl
   int spline_order = 0;
   if( !nh.getParam("spline_order", spline_order ))
   {
-    CNR_WARN(*m_logger, "The param 'spline_order' is missing. Default value superimposed to 0.");
+    CNR_WARN(m_logger, "The param 'spline_order' is missing. Default value superimposed to 0.");
     spline_order = 0;
   }
   setSplineOrder(spline_order);
@@ -58,14 +42,14 @@ void ThorPrefilter::setSplineOrder(const unsigned int& order)
   }
   else
   {
-    CNR_WARN(*m_logger, "Interpolation order " << order << "is out of limits, it should be less or equal to 4");
+    CNR_WARN(m_logger, "Interpolation order " << order << "is out of limits, it should be less or equal to 4");
   }
 }
 
 bool ThorPrefilter::setTrajectory(InterpolationTrajectoryPtr trj)
 {
   CNR_TRACE_START(m_logger);
-  if(!cnr_interpolator_interface::JointInterpolatorInterface::setTrajectory(trj))
+  if(!JointInterpolatorInterface::setTrajectory(trj))
   {
     CNR_RETURN_FALSE(m_logger);
   }
@@ -77,12 +61,12 @@ bool ThorPrefilter::setTrajectory(InterpolationTrajectoryPtr trj)
 }
 
 
-bool ThorPrefilter::interpolate(cnr_interpolator_interface::InterpolationInputConstPtr input,
-                                cnr_interpolator_interface::InterpolationOutputPtr     output)
+bool ThorPrefilter::interpolate(InterpolationInputConstPtr input,
+                                InterpolationOutputPtr     output)
 {
-  // the cnr_interpolator_interface::JointInterpolatorInterface::interpolate shift the input time to the interpolation_time,
+  // the JointInterpolatorInterface::interpolate shift the input time to the interpolation_time,
   // removing the first time the function interpolate is called
-  if(!cnr_interpolator_interface::JointInterpolatorInterface::interpolate(input,output))
+  if(!JointInterpolatorInterface::interpolate(input,output))
   {
     CNR_RETURN_FALSE(m_logger);
   }
@@ -230,10 +214,11 @@ bool ThorPrefilter::interpolate(cnr_interpolator_interface::InterpolationInputCo
   return true;
 }
 
-cnr_interpolator_interface::InterpolationPointConstPtr ThorPrefilter::getLastInterpolatedPoint() const
+InterpolationPointConstPtr ThorPrefilter::getLastInterpolatedPoint() const
 {
   return m_last_interpolated_point;
 }
 
 
-}
+}  // namespace control
+}  // namespace cnr

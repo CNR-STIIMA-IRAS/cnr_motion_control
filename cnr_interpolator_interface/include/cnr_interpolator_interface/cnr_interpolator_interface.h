@@ -12,9 +12,10 @@
 #include <cnr_interpolator_interface/cnr_interpolator_trajectory.h>
 #include <cnr_interpolator_interface/internal/cnr_interpolator_base.h>
 
-namespace cnr_interpolator_interface
+namespace cnr
 {
-
+namespace control
+{
 /**
  * @brief The InterpolatorInterface class
  */
@@ -49,23 +50,24 @@ public:
   virtual InterpolationPointConstPtr getLastInterpolatedPoint() const override;
 };
 
-typedef InterpolatorInterface<cnr_interpolator_interface::JointTrajectory,
-                              cnr_interpolator_interface::JointPoint,
-                              cnr_interpolator_interface::JointInput,
-                              cnr_interpolator_interface::JointOutput >  JointInterpolatorInterface;
+typedef InterpolatorInterface<JointTrajectory,
+                              JointPoint,
+                              JointInput,
+                              JointOutput >  JointInterpolatorInterface;
 
-typedef std::shared_ptr<cnr_interpolator_interface::JointInterpolatorInterface> JointInterpolatorBasePtr;
-typedef std::shared_ptr<cnr_interpolator_interface::JointInterpolatorInterface const> JointInterpolatorInterfaceConstPtr;
+typedef std::shared_ptr<JointInterpolatorInterface> JointInterpolatorBasePtr;
+typedef std::shared_ptr<JointInterpolatorInterface const> JointInterpolatorInterfaceConstPtr;
 
-typedef InterpolatorInterface<cnr_interpolator_interface::CartesianTrajectory,
-                              cnr_interpolator_interface::CartesianPoint,
-                              cnr_interpolator_interface::CartesianInput,
-                              cnr_interpolator_interface::CartesianOutput >  CartesianInterpolatorInterface;
+typedef InterpolatorInterface<CartesianTrajectory,
+                              CartesianPoint,
+                              CartesianInput,
+                              CartesianOutput >  CartesianInterpolatorInterface;
 
-typedef std::shared_ptr<cnr_interpolator_interface::CartesianInterpolatorInterface> CartesianInterpolatorBasePtr;
-typedef std::shared_ptr<cnr_interpolator_interface::CartesianInterpolatorInterface const> CartesianInterpolatorInterfaceConstPtr;
+typedef std::shared_ptr<CartesianInterpolatorInterface> CartesianInterpolatorBasePtr;
+typedef std::shared_ptr<CartesianInterpolatorInterface const> CartesianInterpolatorInterfaceConstPtr;
 
 }  // namespace cnr_interpolator_interface
+}
 
 #include <cnr_interpolator_interface/internal/cnr_interpolator_interface_impl.h>
 
