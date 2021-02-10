@@ -1,7 +1,7 @@
 <library path="lib/libthor_prefilter">
   <class name="thor/ThorPrefilter"
-         type="thor::ThorPrefilter"
-         base_class_type="cnr_interpolator_interface::InterpolatorBase">
+         type="cnr::control::ThorPrefilter"
+         base_class_type="cnr::control::InterpolatorBase">
     <description>
     </description>
   </class>

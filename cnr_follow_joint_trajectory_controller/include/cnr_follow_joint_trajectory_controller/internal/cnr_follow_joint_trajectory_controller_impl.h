@@ -41,8 +41,8 @@ FollowJointTrajectoryController<N,MaxN,H,T>::~FollowJointTrajectoryController()
 
 template<int N, int MaxN, class H, class T>
 FollowJointTrajectoryController<N,MaxN,H,T>::FollowJointTrajectoryController()
-  : m_interpolator_loader("cnr_interpolator_interface", "InterpolatorBase")
-  , m_regulator_loader("cnr_regulator_interface", "BaseRegulator")
+  : m_interpolator_loader("cnr_interpolator_interface", "cnr::control::InterpolatorBase")
+  , m_regulator_loader("cnr_regulator_interface", "cnr::control::BaseRegulator")
 {
   m_is_in_tolerance = false;
   m_preempted = false;
@@ -75,7 +75,8 @@ bool FollowJointTrajectoryController<N,MaxN,H,T>::doInit()
   }
   catch(pluginlib::PluginlibException& ex)
   {
-    CNR_RETURN_FALSE(this->logger(), "The plugin failed to load for some reason. Error: " + std::string(ex.what()));
+    CNR_ERROR(this->logger(), "Failed in loading the interpolator plugin: '" + std::string(ex.what())+"'");
+    CNR_RETURN_FALSE(this->logger(), "Failed in loading the interpolator plugin.");
   }
 
 
@@ -93,17 +94,17 @@ bool FollowJointTrajectoryController<N,MaxN,H,T>::doInit()
     opts->logger    = this->logger();
     opts->period    = ros::Duration(this->m_sampling_period);
     opts->dim       = this->nAx();
-    opts->robot_kin = this->m_rkin;
+    opts->resources_names = this->m_chain.getActiveJointsName();
     opts->interpolator = m_interpolator;
     if(!m_regulator->initialize(this->getRootNh(), this->getControllerNh(), opts))
     {
       CNR_RETURN_FALSE(this->logger(), "The regulator init failed. Abort.")
     }
     m_r.reset(new JointRegulatorReference<N,MaxN>());
-    m_r->set_dimension(this->m_rkin->nAx());
+    m_r->set_dimension(this->m_chain.getActiveJointsNumber());
 
     m_u.reset(new JointRegulatorControlCommand<N,MaxN>());
-    m_u->set_dimension(this->m_rkin->nAx());
+    m_u->set_dimension(this->m_chain.getActiveJointsNumber());
 
   }
   catch(pluginlib::PluginlibException& ex)
@@ -166,7 +167,7 @@ bool FollowJointTrajectoryController<N,MaxN,H,T>::doStarting(const ros::Time& /*
   m_interpolator->setTrajectory(trj);
   
   m_x0.reset(new JointRegulatorState<N,MaxN>());
-  m_x0->robotState() = this->m_rstate;
+  m_x0->robotState().copy(this->m_rstate,this->m_rstate.FULL_STATE);
   
   m_regulator->starting(m_x0, ros::Time::now());
   m_r->target_override = 1.0;
