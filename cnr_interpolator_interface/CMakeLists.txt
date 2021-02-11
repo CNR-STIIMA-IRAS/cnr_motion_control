@@ -22,7 +22,7 @@ catkin_package(
  INCLUDE_DIRS include
  LIBRARIES cnr_interpolator_interface
  CATKIN_DEPENDS cnr_logger roscpp trajectory_msgs rosdyn_core
- DEPENDS Eigen3
+ DEPENDS EIGEN3
 )
 
 include_directories(include ${catkin_INCLUDE_DIRS} ${Eigen3_INCLUDE_DIRS} )

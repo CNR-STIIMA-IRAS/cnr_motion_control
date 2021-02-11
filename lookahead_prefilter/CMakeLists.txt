@@ -22,7 +22,7 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS rosdyn_core cnr_interpolator_interface cnr_logger roscpp
-  DEPENDS Eigen3
+  DEPENDS EIGEN3
 )
 
 ###########
