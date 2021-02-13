@@ -46,8 +46,8 @@ add_library(${PROJECT_NAME}   src/${PROJECT_NAME}/cnr_follow_joint_trajectory_po
                               src/${PROJECT_NAME}/cnr_follow_joint_trajectory_posveleff_controller.cpp)
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${EIGEN_LIBRARIES})
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_compile_options(${PROJECT_NAME} PUBLIC -Wall $<$<CONFIG:RELEASE>:-Ofast> )
-#target_compile_definitions(${PROJECT_NAME} PUBLIC -DEIGEN_DONT_VECTORIZE=1)
+target_compile_options(${PROJECT_NAME} PUBLIC -Wall -faligned-new
+        $<$<CONFIG:Release>:-Ofast -funroll-loops -ffast-math -march=native -mavx -mfma>)
 
 if(${CMAKE_VERSION} VERSION_GREATER "3.16.0")
 target_precompile_headers(${PROJECT_NAME} PUBLIC <mutex>
@@ -57,7 +57,7 @@ target_precompile_headers(${PROJECT_NAME} PUBLIC <mutex>
                                                 <actionlib/server/action_server.h>
                                                 <pluginlib/class_loader.h>
                                                 <pluginlib/class_list_macros.h>
-                                                <control_msgs/FollowJointTrajectoryAction.h>                                                
+                                                <control_msgs/FollowJointTrajectoryAction.h>
                                                 <controller_interface/controller_base.h>
                                                 <name_sorting/sort_trajectories.h>
                                                 <std_msgs/Int64.h>

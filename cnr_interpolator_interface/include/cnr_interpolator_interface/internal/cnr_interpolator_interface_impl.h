@@ -45,17 +45,20 @@ bool InterpolatorInterface<TRJ,PNT,IN,OUT>::setTrajectory(InterpolationTrajector
   CNR_TRACE_START(this->logger());
   if(!trj)
   {
-    CNR_RETURN_FALSE(this->logger(), "Null pointer as input.");
+    CNR_ERROR(this->logger(), "Null pointer as input.");
+    CNR_RETURN_FALSE(this->logger());
   }
   
   if(!std::dynamic_pointer_cast<TRJ const>(trj) )
   {
-    CNR_RETURN_FALSE(this->logger(), "The input trajectory mismatch with the expected type. ABort.");
+    CNR_ERROR(this->logger(),"The input trajectory mismatch with the expected type. ABort.");
+    CNR_RETURN_FALSE(this->logger());
   }
 
   if(!InterpolatorBase::setTrajectory(trj))
   {
-    CNR_RETURN_FALSE(this->logger(), "Error in storing the pointer.");
+    CNR_ERROR(this->logger(), "Error in storing the pointer.");
+    CNR_RETURN_FALSE(this->logger());
   }
   CNR_RETURN_TRUE(this->logger());
 }

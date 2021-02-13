@@ -34,7 +34,8 @@ include_directories(
 
 add_library(${PROJECT_NAME} src/${PROJECT_NAME}/thor_prefilter.cpp )
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_compile_options(${PROJECT_NAME} PUBLIC -Wall -faligned-new $<$<CONFIG:RELEASE>:-Ofast>)
+target_compile_options(${PROJECT_NAME} PUBLIC -Wall -faligned-new
+        $<$<CONFIG:Release>:-Ofast -funroll-loops -ffast-math -march=native -mavx -mfma>)
 
 if(${CMAKE_VERSION} VERSION_GREATER "3.16.0")
 target_precompile_headers(${PROJECT_NAME} PUBLIC  <Eigen/Dense>
@@ -45,7 +46,13 @@ endif()
 add_executable(test_prefilter src/test_prefilter.cpp)
 add_dependencies(test_prefilter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(test_prefilter ${PROJECT_NAME}  ${catkin_LIBRARIES} )
-#target_compile_definitions(test_prefilter PUBLIC -DEIGEN_DONT_VECTORIZE=1)
+target_compile_options(test_prefilter PUBLIC -Wall -faligned-new
+        $<$<CONFIG:Release>:-Ofast -funroll-loops -ffast-math -march=native -mavx -mfma>)
+
+
+###############
+# INSTALL
+##############
 
 install(TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
