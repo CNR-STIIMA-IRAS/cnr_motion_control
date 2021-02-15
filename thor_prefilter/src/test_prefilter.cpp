@@ -33,7 +33,7 @@ int main(int argc, char **argv)
   for (double t = 0; t < 2 * time; t += 0.01)
   {
     ROS_INFO("Time = %f", t);
-    cnr::control::JointInputPtr input(new cnr::control::JointInput());
+    cnr::control::JointInterpolatorInputPtr input(new cnr::control::JointInterpolatorInput());
     cnr::control::JointOutputPtr output(new cnr::control::JointOutput());
     input->time() = ros::Duration(t);
     input->override() = 1.0;

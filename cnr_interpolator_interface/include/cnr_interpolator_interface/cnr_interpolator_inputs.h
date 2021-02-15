@@ -39,43 +39,43 @@ typedef std::shared_ptr<InterpolationInput const> InterpolationInputConstPtr;
 
 
 /**
- * @brief The JointInput struct
+ * @brief The JointInterpolatorInput struct
  */
-class JointInput : public InterpolationInput
+class JointInterpolatorInput : public InterpolationInput
 {
 private:
   trajectory_msgs::JointTrajectoryPoint pnt_;
 public:
-  JointInput() = default;
-  virtual ~JointInput() = default;
-  JointInput(const JointInput&) = delete;
-  JointInput& operator=(const JointInput&) = delete;
-  JointInput(JointInput&&) = delete;
-  JointInput& operator=(JointInput&&) = delete;
+  JointInterpolatorInput() = default;
+  virtual ~JointInterpolatorInput() = default;
+  JointInterpolatorInput(const JointInterpolatorInput&) = delete;
+  JointInterpolatorInput& operator=(const JointInterpolatorInput&) = delete;
+  JointInterpolatorInput(JointInterpolatorInput&&) = delete;
+  JointInterpolatorInput& operator=(JointInterpolatorInput&&) = delete;
 
   const trajectory_msgs::JointTrajectoryPoint& pnt() const { return pnt_; };
   trajectory_msgs::JointTrajectoryPoint& pnt() { return pnt_; };
 };
-typedef std::shared_ptr<JointInput> JointInputPtr;
-typedef std::shared_ptr<JointInput const > JointInputConstPtr;
+typedef std::shared_ptr<JointInterpolatorInput> JointInterpolatorInputPtr;
+typedef std::shared_ptr<JointInterpolatorInput const > JointInterpolatorInputConstPtr;
 
 
 
 /**
- * @brief The CartesianInput struct
+ * @brief The CartesianInterpolatorInput struct
  */
-struct CartesianInput : public InterpolationInput
+struct CartesianInterpolatorInput : public InterpolationInput
 {
-  CartesianInput() = default;
-  virtual ~CartesianInput() = default;
-  CartesianInput(const CartesianInput&) = delete;
-  CartesianInput& operator=(const CartesianInput&) = delete;
-  CartesianInput(CartesianInput&&) = delete;
-  CartesianInput& operator=(CartesianInput&&) = delete;
+  CartesianInterpolatorInput() = default;
+  virtual ~CartesianInterpolatorInput() = default;
+  CartesianInterpolatorInput(const CartesianInterpolatorInput&) = delete;
+  CartesianInterpolatorInput& operator=(const CartesianInterpolatorInput&) = delete;
+  CartesianInterpolatorInput(CartesianInterpolatorInput&&) = delete;
+  CartesianInterpolatorInput& operator=(CartesianInterpolatorInput&&) = delete;
 
 };
-typedef std::shared_ptr<CartesianInput> CartesianInputPtr;
-typedef std::shared_ptr<CartesianInput const > CartesianInputConstPtr;
+typedef std::shared_ptr<CartesianInterpolatorInput> CartesianInterpolatorInputPtr;
+typedef std::shared_ptr<CartesianInterpolatorInput const > CartesianInterpolatorInputConstPtr;
 
 
 }  // namespace control

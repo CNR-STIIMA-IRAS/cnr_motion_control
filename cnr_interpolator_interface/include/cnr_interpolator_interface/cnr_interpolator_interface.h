@@ -52,7 +52,7 @@ public:
 
 typedef InterpolatorInterface<JointTrajectory,
                               JointPoint,
-                              JointInput,
+                              JointInterpolatorInput,
                               JointOutput >  JointInterpolatorInterface;
 
 typedef std::shared_ptr<JointInterpolatorInterface> JointInterpolatorInterfacePtr;
@@ -60,7 +60,7 @@ typedef std::shared_ptr<JointInterpolatorInterface const> JointInterpolatorInter
 
 typedef InterpolatorInterface<CartesianTrajectory,
                               CartesianPoint,
-                              CartesianInput,
+                              CartesianInterpolatorInput,
                               CartesianOutput >  CartesianInterpolatorInterface;
 
 typedef std::shared_ptr<CartesianInterpolatorInterface> CartesianInterpolatorBasePtr;
