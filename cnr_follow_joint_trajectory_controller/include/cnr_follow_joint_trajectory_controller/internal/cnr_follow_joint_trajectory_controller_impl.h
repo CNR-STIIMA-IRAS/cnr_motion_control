@@ -158,8 +158,8 @@ bool FollowJointTrajectoryController<N,MaxN,H,T>::doStarting(const ros::Time& /*
 
   trajectory_msgs::JointTrajectoryPoint pnt;
   pnt.time_from_start = ros::Duration(0.0);
-  pnt.positions   = std::vector<double>(this->m_rstate.q().data(), this->m_rstate.q().data() + this->nAx());
-  pnt.velocities  = std::vector<double>(this->m_rstate.qd().data(), this->m_rstate.qd().data() + this->nAx());
+  pnt.positions   = std::vector<double>(this->getPosition().data(), this->getPosition().data() + this->nAx());
+  pnt.velocities  = std::vector<double>(this->getVelocity().data(), this->getVelocity().data() + this->nAx());
   pnt.accelerations.resize(this->nAx(), 0);
   pnt.effort.resize(this->nAx(), 0);
 
@@ -167,7 +167,7 @@ bool FollowJointTrajectoryController<N,MaxN,H,T>::doStarting(const ros::Time& /*
   m_interpolator->setTrajectory(trj);
   
   m_x0.reset(new JointRegulatorState<N,MaxN>());
-  m_x0->robotState().copy(this->m_rstate,this->m_rstate.FULL_STATE);
+  m_x0->robotState().copy(this->chainState(),this->chainState().FULL_STATE);
   
   m_regulator->starting(m_x0, ros::Time::now());
   m_r->target_override = 1.0;
