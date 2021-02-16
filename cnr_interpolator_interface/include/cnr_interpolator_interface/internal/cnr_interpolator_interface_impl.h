@@ -20,7 +20,9 @@ namespace control
  * @brief The InterpolatorInterface class
  */
 template<class TRJ, class PNT, class IN, class OUT>
-bool InterpolatorInterface<TRJ,PNT,IN,OUT>::initialize(cnr_logger::TraceLoggerPtr logger, ros::NodeHandle&  controller_nh, InterpolationTrajectoryPtr trj)
+bool InterpolatorInterface<TRJ,PNT,IN,OUT>::initialize(cnr_logger::TraceLoggerPtr logger,
+                                                        ros::NodeHandle&  controller_nh,
+                                                          InterpolatorTrajectoryPtr trj)
 {
   if(!InterpolatorBase::initialize(logger, controller_nh, trj))
   {
@@ -40,7 +42,7 @@ bool InterpolatorInterface<TRJ,PNT,IN,OUT>::initialize(cnr_logger::TraceLoggerPt
 }
 
 template<class TRJ, class PNT, class IN, class OUT>
-bool InterpolatorInterface<TRJ,PNT,IN,OUT>::setTrajectory(InterpolationTrajectoryPtr trj)
+bool InterpolatorInterface<TRJ,PNT,IN,OUT>::setTrajectory(InterpolatorTrajectoryPtr trj)
 {
   CNR_TRACE_START(this->logger());
   if(!trj)
@@ -64,7 +66,7 @@ bool InterpolatorInterface<TRJ,PNT,IN,OUT>::setTrajectory(InterpolationTrajector
 }
 
 template<class TRJ, class PNT, class IN, class OUT>
-bool InterpolatorInterface<TRJ,PNT,IN,OUT>::appendToTrajectory(InterpolationPointConstPtr point)
+bool InterpolatorInterface<TRJ,PNT,IN,OUT>::appendToTrajectory(InterpolatorPointConstPtr point)
 {
   CNR_TRACE_START(this->logger());
   if(!InterpolatorBase::appendToTrajectory(point))
@@ -87,7 +89,8 @@ const ros::Duration& InterpolatorInterface<TRJ,PNT,IN,OUT>::trjTime() const
 }
 
 template<class TRJ, class PNT, class IN, class OUT>
-bool InterpolatorInterface<TRJ,PNT,IN,OUT>::interpolate(InterpolationInputConstPtr input, InterpolationOutputPtr output)
+bool InterpolatorInterface<TRJ,PNT,IN,OUT>::interpolate(InterpolatorInputConstPtr input,
+                                                          InterpolatorOutputPtr output)
 {
   CNR_TRACE_START_THROTTLE_DEFAULT(this->logger());
   if(!InterpolatorBase::interpolate(input,output))
@@ -108,7 +111,7 @@ bool InterpolatorInterface<TRJ,PNT,IN,OUT>::interpolate(InterpolationInputConstP
 }
 
 template<class TRJ, class PNT, class IN, class OUT>
-InterpolationPointConstPtr InterpolatorInterface<TRJ,PNT,IN,OUT>::getLastInterpolatedPoint() const
+InterpolatorPointConstPtr InterpolatorInterface<TRJ,PNT,IN,OUT>::getLastInterpolatedPoint() const
 {
   assert(0);
   return nullptr;

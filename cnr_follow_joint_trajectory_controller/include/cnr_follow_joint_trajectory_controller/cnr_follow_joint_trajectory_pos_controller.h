@@ -43,24 +43,20 @@ namespace cnr
 namespace control
 {
 
-template<int N, int MaxN=N>
-class FollowJointTrajectoryPosControllerN : public FollowJointTrajectoryController<N, MaxN,
-                                        hardware_interface::JointHandle, hardware_interface::PositionJointInterface>
+/**
+ * @brief The FollowJointTrajectoryPosController class
+ */
+class FollowJointTrajectoryPosController : public
+    FollowJointTrajectoryController<hardware_interface::JointHandle, hardware_interface::PositionJointInterface>
 
 {
 public:
-  FollowJointTrajectoryPosControllerN( )
+  FollowJointTrajectoryPosController( )
   {
     this->setPriority(this->Q_PRIORITY);
   }
 };
 
-
-using FollowJointTrajectoryPosController  = FollowJointTrajectoryPosControllerN<-1, cnr::control::max_num_axes>;
-using FollowJointTrajectoryPosController1 = FollowJointTrajectoryPosControllerN<1>;
-using FollowJointTrajectoryPosController3 = FollowJointTrajectoryPosControllerN<3>;
-using FollowJointTrajectoryPosController6 = FollowJointTrajectoryPosControllerN<6>;
-using FollowJointTrajectoryPosController7 = FollowJointTrajectoryPosControllerN<7>;
 
 }  // namespace control
 }  // namespace cnr

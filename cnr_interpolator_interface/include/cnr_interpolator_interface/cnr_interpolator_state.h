@@ -13,54 +13,54 @@ namespace control
 {
 
 /**
- * @brief The InterpolationState struct
+ * @brief The InterpolatorState struct
  */
-struct InterpolationState
+struct InterpolatorState
 {
-  InterpolationState() = default;
-  virtual ~InterpolationState() = default;
-  InterpolationState(const InterpolationState&) = delete;
-  InterpolationState& operator=(const InterpolationState&) = delete;
-  InterpolationState(InterpolationState&&) = delete;
-  InterpolationState& operator=(InterpolationState&&) = delete;
+  InterpolatorState() = default;
+  virtual ~InterpolatorState() = default;
+  InterpolatorState(const InterpolatorState&) = delete;
+  InterpolatorState& operator=(const InterpolatorState&) = delete;
+  InterpolatorState(InterpolatorState&&) = delete;
+  InterpolatorState& operator=(InterpolatorState&&) = delete;
 };
-typedef std::shared_ptr<InterpolationState> InterpolationStatePtr;
-typedef std::shared_ptr<InterpolationState const > InterpolationStateConstPtr;
+typedef std::shared_ptr<InterpolatorState> InterpolatorStatePtr;
+typedef std::shared_ptr<InterpolatorState const > InterpolatorStateConstPtr;
 
 
 
 /**
- * @brief The JointState struct
+ * @brief The JointInterpolatorState struct
  */
-struct JointState : public InterpolationState
+struct JointInterpolatorState : public InterpolatorState
 {
-  JointState() = default;
-  virtual ~JointState() = default;
-  JointState(const JointState&) = delete;
-  JointState& operator=(const JointState&) = delete;
-  JointState(JointState&&) = delete;
-  JointState& operator=(JointState&&) = delete;
+  JointInterpolatorState() = default;
+  virtual ~JointInterpolatorState() = default;
+  JointInterpolatorState(const JointInterpolatorState&) = delete;
+  JointInterpolatorState& operator=(const JointInterpolatorState&) = delete;
+  JointInterpolatorState(JointInterpolatorState&&) = delete;
+  JointInterpolatorState& operator=(JointInterpolatorState&&) = delete;
 };
-typedef std::shared_ptr<JointState> JointStatePtr;
-typedef std::shared_ptr<JointState const > JointStateConstPtr;
+typedef std::shared_ptr<JointInterpolatorState> JointInterpolatorStatePtr;
+typedef std::shared_ptr<JointInterpolatorState const > JointInterpolatorStateConstPtr;
 
 
 
 /**
- * @brief The CartesianState struct
+ * @brief The CartesianInterpolatorState struct
  */
-struct CartesianState : public InterpolationState
+struct CartesianInterpolatorState : public InterpolatorState
 {
-  CartesianState() = default;
-  virtual ~CartesianState() = default;
-  CartesianState(const CartesianState&) = delete;
-  CartesianState& operator=(const CartesianState&) = delete;
-  CartesianState(CartesianState&&) = delete;
-  CartesianState& operator=(CartesianState&&) = delete;
+  CartesianInterpolatorState() = default;
+  virtual ~CartesianInterpolatorState() = default;
+  CartesianInterpolatorState(const CartesianInterpolatorState&) = delete;
+  CartesianInterpolatorState& operator=(const CartesianInterpolatorState&) = delete;
+  CartesianInterpolatorState(CartesianInterpolatorState&&) = delete;
+  CartesianInterpolatorState& operator=(CartesianInterpolatorState&&) = delete;
 
 };
-typedef std::shared_ptr<CartesianState> CartesianStatePtr;
-typedef std::shared_ptr<CartesianState const > CartesianStateConstPtr;
+typedef std::shared_ptr<CartesianInterpolatorState> CartesianInterpolatorStatePtr;
+typedef std::shared_ptr<CartesianInterpolatorState const > CartesianInterpolatorStateConstPtr;
 
 
 }  // namespace control

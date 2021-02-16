@@ -7,7 +7,7 @@ namespace control
 
 bool InterpolatorBase::initialize(cnr_logger::TraceLoggerPtr logger,
                                   ros::NodeHandle&           controller_nh,
-                                  InterpolationTrajectoryPtr trj )
+                                  InterpolatorTrajectoryPtr trj )
 {
   m_controller_nh = controller_nh;
   if(logger)
@@ -16,12 +16,13 @@ bool InterpolatorBase::initialize(cnr_logger::TraceLoggerPtr logger,
   }
   else
   {
-    ROS_ERROR("The interpolator has none logger set!");
+    std::cerr<< cnr_logger::RED()<<__PRETTY_FUNCTION__<<":"<<__LINE__
+              <<": The interpolator has none logger set!"<<cnr_logger::RESET()<< std::endl;
     return false;
   }
   CNR_TRACE_START(m_logger);
   m_starting_duration = ros::Duration(0);
-  m_new_trajectory_interpolation_started = false;
+  m_new_trajectory_interpolator_started = false;
   bool ret = true;
   if(trj)
   {
@@ -30,7 +31,7 @@ bool InterpolatorBase::initialize(cnr_logger::TraceLoggerPtr logger,
   CNR_RETURN_BOOL(m_logger, ret);
 }
 
-bool InterpolatorBase::setTrajectory(InterpolationTrajectoryPtr trj)
+bool InterpolatorBase::setTrajectory(InterpolatorTrajectoryPtr trj)
 {
   if(!trj)
   {
@@ -43,11 +44,11 @@ bool InterpolatorBase::setTrajectory(InterpolationTrajectoryPtr trj)
   }
   m_trj = trj;
   m_starting_duration = ros::Duration(0);
-  m_new_trajectory_interpolation_started = false;
+  m_new_trajectory_interpolator_started = false;
   CNR_RETURN_TRUE(m_logger);
 }
 
-bool InterpolatorBase::appendToTrajectory(InterpolationPointConstPtr point)
+bool InterpolatorBase::appendToTrajectory(InterpolatorPointConstPtr point)
 {
   CNR_TRACE_START(m_logger);
   if(!point)
@@ -70,16 +71,16 @@ const ros::Duration& InterpolatorBase::trjTime() const
   }
 }
 
-bool InterpolatorBase::interpolate(InterpolationInputConstPtr input, InterpolationOutputPtr output)
+bool InterpolatorBase::interpolate(InterpolatorInputConstPtr input, InterpolatorOutputPtr output)
 {
   if(!input || !output)
   {
     CNR_RETURN_FALSE(this->logger(), "Null pointer as input.");
   }
 
-  if(m_new_trajectory_interpolation_started)
+  if(m_new_trajectory_interpolator_started)
   {
-    m_new_trajectory_interpolation_started = true;
+    m_new_trajectory_interpolator_started = true;
     m_starting_duration = input->time();
   }
   m_interpolator_time = input->time() - m_starting_duration;
@@ -87,12 +88,12 @@ bool InterpolatorBase::interpolate(InterpolationInputConstPtr input, Interpolati
 
 }
 
-InterpolationPointConstPtr InterpolatorBase::getLastInterpolatedPoint() const
+InterpolatorPointConstPtr InterpolatorBase::getLastInterpolatedPoint() const
 {
   return nullptr;
 }
 
-InterpolationTrajectoryConstPtr InterpolatorBase::getTrajectory() const
+InterpolatorTrajectoryConstPtr InterpolatorBase::getTrajectory() const
 {
   return m_trj;
 }

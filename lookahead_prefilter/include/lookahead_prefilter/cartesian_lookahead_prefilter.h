@@ -31,16 +31,16 @@ public:
 
   virtual bool initialize(cnr_logger::TraceLoggerPtr logger, 
                           ros::NodeHandle&           controller_nh,
-                          InterpolationTrajectoryPtr  trj = nullptr) override;
+                          InterpolatorTrajectoryPtr  trj = nullptr) override;
 
-  virtual bool setTrajectory(InterpolationTrajectoryPtr trj) override;
-  virtual bool appendToTrajectory(InterpolationPointConstPtr point) override;
-  virtual bool interpolate(InterpolationInputConstPtr input,
-                           InterpolationOutputPtr output) override;
-  virtual InterpolationPointConstPtr getLastInterpolatedPoint() const override;
+  virtual bool setTrajectory(InterpolatorTrajectoryPtr trj) override;
+  virtual bool appendToTrajectory(InterpolatorPointConstPtr point) override;
+  virtual bool interpolate(InterpolatorInputConstPtr input,
+                           InterpolatorOutputPtr output) override;
+  virtual InterpolatorPointConstPtr getLastInterpolatedPoint() const override;
 
 private:
-  CartesianPointPtr m_last_interpolated_point;
+  CartesianInterpolatorPointPtr m_last_interpolated_point;
 
 };
 

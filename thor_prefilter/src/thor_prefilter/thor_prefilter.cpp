@@ -16,7 +16,7 @@ namespace control
  * @param trj
  * @return
  */
-bool ThorPrefilter::initialize(cnr_logger::TraceLoggerPtr logger, ros::NodeHandle& nh, InterpolationTrajectoryPtr trj)
+bool ThorPrefilter::initialize(cnr_logger::TraceLoggerPtr logger, ros::NodeHandle& nh, InterpolatorTrajectoryPtr trj)
 {
   if(!JointInterpolatorInterface::initialize(logger, nh, trj) )
   {
@@ -46,7 +46,7 @@ void ThorPrefilter::setSplineOrder(const unsigned int& order)
   }
 }
 
-bool ThorPrefilter::setTrajectory(InterpolationTrajectoryPtr trj)
+bool ThorPrefilter::setTrajectory(InterpolatorTrajectoryPtr trj)
 {
   CNR_TRACE_START(m_logger);
   if(!JointInterpolatorInterface::setTrajectory(trj))
@@ -54,15 +54,15 @@ bool ThorPrefilter::setTrajectory(InterpolationTrajectoryPtr trj)
     CNR_RETURN_FALSE(m_logger);
   }
  
-  m_last_interpolated_point.reset( new JointPoint() );
+  m_last_interpolated_point.reset( new JointInterpolatorPoint() );
   m_last_interpolated_point->pnt = this->trj()->trj->points.front();
 
   CNR_RETURN_TRUE(m_logger);
 }
 
 
-bool ThorPrefilter::interpolate(InterpolationInputConstPtr input,
-                                InterpolationOutputPtr     output)
+bool ThorPrefilter::interpolate(InterpolatorInputConstPtr input,
+                                InterpolatorOutputPtr     output)
 {
   // the JointInterpolatorInterface::interpolate shift the input time to the interpolation_time,
   // removing the first time the function interpolate is called
@@ -214,7 +214,7 @@ bool ThorPrefilter::interpolate(InterpolationInputConstPtr input,
   return true;
 }
 
-InterpolationPointConstPtr ThorPrefilter::getLastInterpolatedPoint() const
+InterpolatorPointConstPtr ThorPrefilter::getLastInterpolatedPoint() const
 {
   return m_last_interpolated_point;
 }

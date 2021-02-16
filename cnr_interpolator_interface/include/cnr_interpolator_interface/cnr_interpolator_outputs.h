@@ -12,60 +12,60 @@ namespace control
 {
 
 /**
- * @brief The InterpolationOutput struct
+ * @brief The InterpolatorOutput struct
  */
-struct InterpolationOutput
+struct InterpolatorOutput
 {
-  InterpolationOutput() = default;
-  virtual ~InterpolationOutput() = default;
-  InterpolationOutput(const InterpolationOutput&) = delete;
-  InterpolationOutput& operator=(const InterpolationOutput&) = delete;
-  InterpolationOutput(InterpolationOutput&&) = delete;
-  InterpolationOutput& operator=(InterpolationOutput&&) = delete;
+  InterpolatorOutput() = default;
+  virtual ~InterpolatorOutput() = default;
+  InterpolatorOutput(const InterpolatorOutput&) = delete;
+  InterpolatorOutput& operator=(const InterpolatorOutput&) = delete;
+  InterpolatorOutput(InterpolatorOutput&&) = delete;
+  InterpolatorOutput& operator=(InterpolatorOutput&&) = delete;
 };
 
-typedef std::shared_ptr<InterpolationOutput> InterpolationOutputPtr;
-typedef std::shared_ptr<InterpolationOutput const > InterpolationOutputConstPtr;
+typedef std::shared_ptr<InterpolatorOutput> InterpolatorOutputPtr;
+typedef std::shared_ptr<InterpolatorOutput const > InterpolatorOutputConstPtr;
 
 
 /**
- * @brief The JointOutput struct
+ * @brief The JointInterpolatorOutput struct
  */
-struct JointOutput : public InterpolationOutput
+struct JointInterpolatorOutput : public InterpolatorOutput
 {
-  JointOutput() = default;
-  virtual ~JointOutput() = default;
-  JointOutput(const JointOutput&) = delete;
-  JointOutput& operator=(const JointOutput&) = delete;
-  JointOutput(JointOutput&&) = delete;
-  JointOutput& operator=(JointOutput&&) = delete;
+  JointInterpolatorOutput() = default;
+  virtual ~JointInterpolatorOutput() = default;
+  JointInterpolatorOutput(const JointInterpolatorOutput&) = delete;
+  JointInterpolatorOutput& operator=(const JointInterpolatorOutput&) = delete;
+  JointInterpolatorOutput(JointInterpolatorOutput&&) = delete;
+  JointInterpolatorOutput& operator=(JointInterpolatorOutput&&) = delete;
 
   trajectory_msgs::JointTrajectoryPoint pnt;
 };
 
-typedef std::shared_ptr<JointOutput> JointOutputPtr;
-typedef std::shared_ptr<JointOutput const > JointOutputConstPtr;
+typedef std::shared_ptr<JointInterpolatorOutput> JointInterpolatorOutputPtr;
+typedef std::shared_ptr<JointInterpolatorOutput const > JointInterpolatorOutputConstPtr;
 
 
 
 
 /**
- * @brief The CartesianOutput struct
+ * @brief The CartesianInterpolatorOutput struct
  */
-struct CartesianOutput : public InterpolationOutput
+struct CartesianInterpolatorOutput : public InterpolatorOutput
 {
-  CartesianOutput() = default;
-  virtual ~CartesianOutput() = default;
-  CartesianOutput(const CartesianOutput&) = delete;
-  CartesianOutput& operator=(const CartesianOutput&) = delete;
-  CartesianOutput(CartesianOutput&&) = delete;
-  CartesianOutput& operator=(CartesianOutput&&) = delete;
+  CartesianInterpolatorOutput() = default;
+  virtual ~CartesianInterpolatorOutput() = default;
+  CartesianInterpolatorOutput(const CartesianInterpolatorOutput&) = delete;
+  CartesianInterpolatorOutput& operator=(const CartesianInterpolatorOutput&) = delete;
+  CartesianInterpolatorOutput(CartesianInterpolatorOutput&&) = delete;
+  CartesianInterpolatorOutput& operator=(CartesianInterpolatorOutput&&) = delete;
 
-  CartesianPoint pnt;
+  CartesianInterpolatorPoint pnt;
 };
 
-typedef std::shared_ptr<CartesianOutput> CartesianOutputPtr;
-typedef std::shared_ptr<CartesianOutput const > CartesianOutputConstPtr;
+typedef std::shared_ptr<CartesianInterpolatorOutput> CartesianInterpolatorOutputPtr;
+typedef std::shared_ptr<CartesianInterpolatorOutput const > CartesianInterpolatorOutputConstPtr;
 
 
 

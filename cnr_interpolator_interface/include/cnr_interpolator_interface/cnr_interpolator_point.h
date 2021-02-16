@@ -12,52 +12,52 @@ namespace control
 
 
 /**
- * @brief The InterpolationPoint struct
+ * @brief The InterpolatorPoint struct
  */
-struct InterpolationPoint
+struct InterpolatorPoint
 {
-  InterpolationPoint() = default;
-  virtual ~InterpolationPoint() = default;
-  InterpolationPoint(const InterpolationPoint&) = default;
-  InterpolationPoint& operator=(const InterpolationPoint&) = default;
-  InterpolationPoint(InterpolationPoint&&) = default;
-  InterpolationPoint& operator=(InterpolationPoint&&) = default;
+  InterpolatorPoint() = default;
+  virtual ~InterpolatorPoint() = default;
+  InterpolatorPoint(const InterpolatorPoint&) = default;
+  InterpolatorPoint& operator=(const InterpolatorPoint&) = default;
+  InterpolatorPoint(InterpolatorPoint&&) = default;
+  InterpolatorPoint& operator=(InterpolatorPoint&&) = default;
 };
 
-typedef std::shared_ptr<InterpolationPoint> InterpolationPointPtr;
-typedef std::shared_ptr<InterpolationPoint const > InterpolationPointConstPtr;
+typedef std::shared_ptr<InterpolatorPoint> InterpolatorPointPtr;
+typedef std::shared_ptr<InterpolatorPoint const > InterpolatorPointConstPtr;
 
 
 /**
- * @brief The JointPoint struct
+ * @brief The JointInterpolatorPoint struct
  */
-struct JointPoint : public InterpolationPoint
+struct JointInterpolatorPoint : public InterpolatorPoint
 {
-  JointPoint() = default;
-  virtual ~JointPoint() = default;
-  JointPoint(const JointPoint&) = delete;
-  JointPoint& operator=(const JointPoint&) = delete;
-  JointPoint(JointPoint&&) = delete;
-  JointPoint& operator=(JointPoint&&) = delete;
+  JointInterpolatorPoint() = default;
+  virtual ~JointInterpolatorPoint() = default;
+  JointInterpolatorPoint(const JointInterpolatorPoint&) = delete;
+  JointInterpolatorPoint& operator=(const JointInterpolatorPoint&) = delete;
+  JointInterpolatorPoint(JointInterpolatorPoint&&) = delete;
+  JointInterpolatorPoint& operator=(JointInterpolatorPoint&&) = delete;
 
   trajectory_msgs::JointTrajectoryPoint pnt;
 };
 
-typedef std::shared_ptr<JointPoint> JointPointPtr;
-typedef std::shared_ptr<JointPoint const > JointPointConstPtr;
+typedef std::shared_ptr<JointInterpolatorPoint> JointInterpolatorPointPtr;
+typedef std::shared_ptr<JointInterpolatorPoint const > JointInterpolatorPointConstPtr;
 
 
 /**
- * @brief The CartesianPoint struct
+ * @brief The CartesianInterpolatorPoint struct
  */
-struct CartesianPoint : public InterpolationPoint
+struct CartesianInterpolatorPoint : public InterpolatorPoint
 {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  CartesianPoint() = default;
-  virtual ~CartesianPoint() = default;
-  CartesianPoint(const CartesianPoint&) = default;
-  CartesianPoint& operator=(const CartesianPoint&) = default;
+  CartesianInterpolatorPoint() = default;
+  virtual ~CartesianInterpolatorPoint() = default;
+  CartesianInterpolatorPoint(const CartesianInterpolatorPoint&) = default;
+  CartesianInterpolatorPoint& operator=(const CartesianInterpolatorPoint&) = default;
 
   ros::Duration   time_from_start;
   Eigen::Affine3d x;
@@ -65,8 +65,8 @@ struct CartesianPoint : public InterpolationPoint
   Eigen::Vector6d twistd;
 };
 
-typedef std::shared_ptr<CartesianPoint> CartesianPointPtr;
-typedef std::shared_ptr<CartesianPoint const > CartesianPointConstPtr;
+typedef std::shared_ptr<CartesianInterpolatorPoint> CartesianInterpolatorPointPtr;
+typedef std::shared_ptr<CartesianInterpolatorPoint const > CartesianInterpolatorPointConstPtr;
 
 
 

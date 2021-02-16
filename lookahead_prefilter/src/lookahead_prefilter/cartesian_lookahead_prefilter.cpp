@@ -15,7 +15,7 @@ namespace control
 
 bool CartesianLookaheadPrefilter::initialize(cnr_logger::TraceLoggerPtr logger,
                                              ros::NodeHandle& nh,
-                                             InterpolationTrajectoryPtr trj)
+                                             InterpolatorTrajectoryPtr trj)
 {
   if(!CartesianInterpolatorInterface::initialize(logger, nh, trj))
   {
@@ -30,17 +30,17 @@ bool CartesianLookaheadPrefilter::initialize(cnr_logger::TraceLoggerPtr logger,
   return true;
 }
 
-bool CartesianLookaheadPrefilter::interpolate(InterpolationInputConstPtr input,
-                                              InterpolationOutputPtr output)
+bool CartesianLookaheadPrefilter::interpolate(InterpolatorInputConstPtr input,
+                                              InterpolatorOutputPtr output)
 {
   CNR_TRACE_START_THROTTLE(this->logger(), 5.0);
   if(!CartesianInterpolatorInterface::interpolate(input,output))
   {
     CNR_RETURN_FALSE(this->logger());
   }
-  std::vector< CartesianPoint >& points = trj()->trj;
+  std::vector< CartesianInterpolatorPoint >& points = trj()->trj;
 
-  if (points.size() == 0)
+  if(points.size() == 0)
   {
     CNR_RETURN_FALSE(this->logger());
   }
@@ -53,18 +53,19 @@ bool CartesianLookaheadPrefilter::interpolate(InterpolationInputConstPtr input,
     CNR_RETURN_FALSE(this->logger());
   }
 
-  if ((in()->time() - points.back().time_from_start).toSec() >= 0)
+  if((in()->time() - points.back().time_from_start).toSec() >= 0)
   {
     out()->pnt = points.back();
   }
 
   for(unsigned int iPnt = 1; iPnt < points.size(); iPnt++)
   {
-    if (((in()->time() - points.at(iPnt).time_from_start).toSec() < 0) && ((in()->time() - points.at(iPnt - 1).time_from_start).toSec() >= 0))
+    if(((in()->time() - points.at(iPnt).time_from_start).toSec() < 0)
+    && ((in()->time() - points.at(iPnt - 1).time_from_start).toSec() >= 0))
     {
       out()->pnt.time_from_start = in()->time();
-      double delta_time = std::max(1.0e-6, (points.at(iPnt).time_from_start - points.at(iPnt - 1).time_from_start).toSec());
-      double t          = (in()->time() - points.at(iPnt - 1).time_from_start).toSec();
+      double delta_time = std::max(1.0e-6,(points.at(iPnt).time_from_start - points.at(iPnt - 1).time_from_start).toSec());
+      double t          =(in()->time() - points.at(iPnt - 1).time_from_start).toSec();
       double ratio      = t / delta_time;
 
       Eigen::Affine3d T_0_1 =points.at(iPnt - 1).x;
@@ -95,7 +96,7 @@ bool CartesianLookaheadPrefilter::interpolate(InterpolationInputConstPtr input,
 }
 
 
-bool CartesianLookaheadPrefilter::setTrajectory(InterpolationTrajectoryPtr _trj)
+bool CartesianLookaheadPrefilter::setTrajectory(InterpolatorTrajectoryPtr _trj)
 {
   CNR_TRACE_START(m_logger);
   if(!CartesianInterpolatorInterface::setTrajectory(_trj))
@@ -103,13 +104,13 @@ bool CartesianLookaheadPrefilter::setTrajectory(InterpolationTrajectoryPtr _trj)
     CNR_RETURN_FALSE(m_logger, "Trajectory is not set");
   }
 
-  m_last_interpolated_point.reset( new CartesianPoint() );
+  m_last_interpolated_point.reset( new CartesianInterpolatorPoint() );
   *m_last_interpolated_point =trj()->trj.front();
   CNR_RETURN_TRUE(m_logger);
 }
 
 
-bool CartesianLookaheadPrefilter::appendToTrajectory(InterpolationPointConstPtr point)
+bool CartesianLookaheadPrefilter::appendToTrajectory(InterpolatorPointConstPtr point)
 {
   CNR_TRACE_START(m_logger);
   if(!CartesianInterpolatorInterface::appendToTrajectory(point))
@@ -119,7 +120,7 @@ bool CartesianLookaheadPrefilter::appendToTrajectory(InterpolationPointConstPtr 
   CNR_RETURN_TRUE(m_logger);
 }
 
-InterpolationPointConstPtr CartesianLookaheadPrefilter::getLastInterpolatedPoint() const
+InterpolatorPointConstPtr CartesianLookaheadPrefilter::getLastInterpolatedPoint() const
 {
   return m_last_interpolated_point;
 }

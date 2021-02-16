@@ -40,28 +40,28 @@ public:
   InterpolatorInterface& operator=(InterpolatorInterface&&) = delete;
 
   virtual bool initialize(cnr_logger::TraceLoggerPtr logger, 
-                          ros::NodeHandle&            controller_nh,
-                          InterpolationTrajectoryPtr  trj = nullptr) override;
+                          ros::NodeHandle&           controller_nh,
+                          InterpolatorTrajectoryPtr  trj = nullptr) override;
 
-  virtual bool setTrajectory(InterpolationTrajectoryPtr trj) override;
-  virtual bool appendToTrajectory(InterpolationPointConstPtr point) override;
+  virtual bool setTrajectory(InterpolatorTrajectoryPtr trj) override;
+  virtual bool appendToTrajectory(InterpolatorPointConstPtr point) override;
   virtual const ros::Duration& trjTime() const override;
-  virtual bool interpolate(InterpolationInputConstPtr input, InterpolationOutputPtr output) override;
-  virtual InterpolationPointConstPtr getLastInterpolatedPoint() const override;
+  virtual bool interpolate(InterpolatorInputConstPtr input, InterpolatorOutputPtr output) override;
+  virtual InterpolatorPointConstPtr getLastInterpolatedPoint() const override;
 };
 
 typedef InterpolatorInterface<JointTrajectory,
-                              JointPoint,
+                              JointInterpolatorPoint,
                               JointInterpolatorInput,
-                              JointOutput >  JointInterpolatorInterface;
+                              JointInterpolatorOutput >  JointInterpolatorInterface;
 
 typedef std::shared_ptr<JointInterpolatorInterface> JointInterpolatorInterfacePtr;
 typedef std::shared_ptr<JointInterpolatorInterface const> JointInterpolatorInterfaceConstPtr;
 
 typedef InterpolatorInterface<CartesianTrajectory,
-                              CartesianPoint,
+                              CartesianInterpolatorPoint,
                               CartesianInterpolatorInput,
-                              CartesianOutput >  CartesianInterpolatorInterface;
+                              CartesianInterpolatorOutput >  CartesianInterpolatorInterface;
 
 typedef std::shared_ptr<CartesianInterpolatorInterface> CartesianInterpolatorBasePtr;
 typedef std::shared_ptr<CartesianInterpolatorInterface const> CartesianInterpolatorInterfaceConstPtr;

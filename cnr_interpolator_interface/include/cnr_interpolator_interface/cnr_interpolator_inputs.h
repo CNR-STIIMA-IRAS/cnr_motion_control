@@ -12,20 +12,20 @@ namespace control
 {
 
 /**
- * @brief The InterpolationInput struct
+ * @brief The InterpolatorInput struct
  */
-class InterpolationInput
+class InterpolatorInput
 {
 private:
   ros::Duration time_;
   double override_;
 public:
-  InterpolationInput() : time_(0.0), override_(1.0) {}
-  virtual ~InterpolationInput() = default;
-  InterpolationInput(const InterpolationInput&) = delete;
-  InterpolationInput& operator=(const InterpolationInput&) = delete;
-  InterpolationInput(InterpolationInput&&) = delete;
-  InterpolationInput& operator=(InterpolationInput&&) = delete;
+  InterpolatorInput() : time_(0.0), override_(1.0) {}
+  virtual ~InterpolatorInput() = default;
+  InterpolatorInput(const InterpolatorInput&) = delete;
+  InterpolatorInput& operator=(const InterpolatorInput&) = delete;
+  InterpolatorInput(InterpolatorInput&&) = delete;
+  InterpolatorInput& operator=(InterpolatorInput&&) = delete;
 
   const ros::Duration& time() const {return time_; }
   const double& override() const {return override_; }
@@ -33,15 +33,15 @@ public:
   double& override() {return override_; }
 
 };
-typedef std::shared_ptr<InterpolationInput> InterpolationInputPtr;
-typedef std::shared_ptr<InterpolationInput const> InterpolationInputConstPtr;
+typedef std::shared_ptr<InterpolatorInput> InterpolatorInputPtr;
+typedef std::shared_ptr<InterpolatorInput const> InterpolatorInputConstPtr;
 
 
 
 /**
  * @brief The JointInterpolatorInput struct
  */
-class JointInterpolatorInput : public InterpolationInput
+class JointInterpolatorInput : public InterpolatorInput
 {
 private:
   trajectory_msgs::JointTrajectoryPoint pnt_;
@@ -64,7 +64,7 @@ typedef std::shared_ptr<JointInterpolatorInput const > JointInterpolatorInputCon
 /**
  * @brief The CartesianInterpolatorInput struct
  */
-struct CartesianInterpolatorInput : public InterpolationInput
+struct CartesianInterpolatorInput : public InterpolatorInput
 {
   CartesianInterpolatorInput() = default;
   virtual ~CartesianInterpolatorInput() = default;

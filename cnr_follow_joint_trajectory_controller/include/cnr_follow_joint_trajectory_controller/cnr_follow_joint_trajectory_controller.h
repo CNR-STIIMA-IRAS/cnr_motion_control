@@ -53,8 +53,8 @@ namespace cnr
 namespace control
 {
 
-template<int N, int MaxN, class H, class T>
-class FollowJointTrajectoryController : public cnr::control::JointCommandController<N, MaxN, H,T>
+template<class H, class T>
+class FollowJointTrajectoryController : public cnr::control::JointCommandController<H,T>
 {
 public:
   FollowJointTrajectoryController();
@@ -76,9 +76,9 @@ protected:
 
   pluginlib::ClassLoader<BaseRegulator>   m_regulator_loader;
   std::shared_ptr<BaseRegulator>          m_regulator;
-  JointRegulatorStatePtr<N,MaxN>          m_x0;
-  JointRegulatorReferencePtr<N,MaxN>      m_r;
-  JointRegulatorControlCommandPtr<N,MaxN> m_u;
+  JointRegulatorStatePtr                  m_x0;
+  JointRegulatorReferencePtr              m_r;
+  JointRegulatorControlCommandPtr         m_u;
 
 
   int m_is_finished;

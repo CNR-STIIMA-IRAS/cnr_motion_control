@@ -37,7 +37,7 @@ add_library(${PROJECT_NAME} src/${PROJECT_NAME}/internal/cnr_interpolator_base.c
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} Eigen3::Eigen)
 target_compile_options(${PROJECT_NAME} PUBLIC -Wall -faligned-new 
-	$<$<CONFIG:Release>:-Ofast -funroll-loops -ffast-math -march=native -mavx -mfma>)
+	$<$<CONFIG:Release>:-Ofast -funroll-loops -ffast-math >)
 
 if(${CMAKE_VERSION} VERSION_GREATER "3.16.0")
 target_precompile_headers(${PROJECT_NAME} PUBLIC <Eigen/Dense>
@@ -72,7 +72,7 @@ if(CATKIN_ENABLE_TESTING)
   find_package(rostest REQUIRED)
   add_rostest_gtest(${PROJECT_NAME}_test test/test.launch test/test.cpp)
   target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${catkin_LIBRARIES} ${rostest_LIBRARIES} )
-  target_compile_options(${PROJECT_NAME}_test PUBLIC $<$<CONFIG:Release>:-Ofast -funroll-loops -ffast-math -march=native -mavx -mfma>)
+  target_compile_options(${PROJECT_NAME}_test PUBLIC $<$<CONFIG:Release>:-Ofast -funroll-loops -ffast-math >)
   if(ENABLE_COVERAGE_TESTING)
     set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")
     add_code_coverage(

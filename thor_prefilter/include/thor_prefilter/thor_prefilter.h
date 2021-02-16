@@ -16,8 +16,8 @@ namespace control
 class ThorPrefilter : public JointInterpolatorInterface
 {
 protected:
-  JointPointPtr m_last_interpolated_point;
-  JointState m_state;
+  JointInterpolatorPointPtr m_last_interpolated_point;
+  JointInterpolatorState m_state;
   unsigned int m_order;
 
 public:
@@ -30,13 +30,13 @@ public:
   ThorPrefilter& operator=(ThorPrefilter&&) = delete;
 
   virtual bool initialize(cnr_logger::TraceLoggerPtr logger, ros::NodeHandle& nh,
-                          InterpolationTrajectoryPtr trj = nullptr) override;
+                          InterpolatorTrajectoryPtr trj = nullptr) override;
 
-  virtual bool interpolate(InterpolationInputConstPtr input,
-                           InterpolationOutputPtr     output) override;
+  virtual bool interpolate(InterpolatorInputConstPtr input,
+                           InterpolatorOutputPtr     output) override;
 
-  virtual bool setTrajectory(InterpolationTrajectoryPtr trj) override;
-  virtual InterpolationPointConstPtr getLastInterpolatedPoint() const override;
+  virtual bool setTrajectory(InterpolatorTrajectoryPtr trj) override;
+  virtual InterpolatorPointConstPtr getLastInterpolatedPoint() const override;
 
   void setSplineOrder(const unsigned int& order);
 };

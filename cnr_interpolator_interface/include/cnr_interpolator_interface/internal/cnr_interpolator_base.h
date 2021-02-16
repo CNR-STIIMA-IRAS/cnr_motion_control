@@ -29,11 +29,11 @@ protected:
   ros::NodeHandle  m_controller_nh;
   ros::Duration    m_starting_duration;
   ros::Duration    m_interpolator_time;
-  bool             m_new_trajectory_interpolation_started;
+  bool             m_new_trajectory_interpolator_started;
 
-  InterpolationTrajectoryPtr  m_trj;
-  InterpolationInputConstPtr  m_in;
-  InterpolationOutputPtr      m_out;
+  InterpolatorTrajectoryPtr  m_trj;
+  InterpolatorInputConstPtr   m_in;
+  InterpolatorOutputPtr       m_out;
 
   cnr_logger::TraceLoggerPtr  m_logger;
 
@@ -48,15 +48,15 @@ public:
   InterpolatorBase& operator=(InterpolatorBase&&) = delete;
 
   virtual bool initialize(cnr_logger::TraceLoggerPtr logger, ros::NodeHandle& controller_nh,
-                          InterpolationTrajectoryPtr  trj = nullptr);
+                          InterpolatorTrajectoryPtr  trj = nullptr);
 
-  virtual bool setTrajectory(InterpolationTrajectoryPtr trj);
-  virtual bool appendToTrajectory(InterpolationPointConstPtr /*point*/);
+  virtual bool setTrajectory(InterpolatorTrajectoryPtr trj);
+  virtual bool appendToTrajectory(InterpolatorPointConstPtr /*point*/);
   virtual const ros::Duration& trjTime() const;
-  virtual bool interpolate(InterpolationInputConstPtr input, InterpolationOutputPtr /*output*/);
-  virtual InterpolationPointConstPtr getLastInterpolatedPoint() const;
+  virtual bool interpolate(InterpolatorInputConstPtr input, InterpolatorOutputPtr /*output*/);
+  virtual InterpolatorPointConstPtr getLastInterpolatedPoint() const;
   
-  virtual InterpolationTrajectoryConstPtr getTrajectory() const;
+  virtual InterpolatorTrajectoryConstPtr getTrajectory() const;
   virtual const ros::Duration& interpolatorTime() const;
   cnr_logger::TraceLoggerPtr& logger() {return m_logger; }
 };

@@ -13,32 +13,32 @@ namespace control
 
 
 /**
- * @brief The InterpolationTrajectory struct
+ * @brief The InterpolatorTrajectory struct
  */
-struct InterpolationTrajectory
+struct InterpolatorTrajectory
 {
-  InterpolationTrajectory() = default;
-  virtual ~InterpolationTrajectory() = default;
-  InterpolationTrajectory(const InterpolationTrajectory&) = delete;
-  InterpolationTrajectory& operator=(const InterpolationTrajectory&) = delete;
-  InterpolationTrajectory(InterpolationTrajectory&&) = delete;
-  InterpolationTrajectory& operator=(InterpolationTrajectory&&) = delete;
+  InterpolatorTrajectory() = default;
+  virtual ~InterpolatorTrajectory() = default;
+  InterpolatorTrajectory(const InterpolatorTrajectory&) = delete;
+  InterpolatorTrajectory& operator=(const InterpolatorTrajectory&) = delete;
+  InterpolatorTrajectory(InterpolatorTrajectory&&) = delete;
+  InterpolatorTrajectory& operator=(InterpolatorTrajectory&&) = delete;
 
   virtual bool isEmpty() const = 0;
-  virtual bool append( InterpolationPointConstPtr point) = 0;
+  virtual bool append(InterpolatorPointConstPtr point) = 0;
   virtual const ros::Duration& trjTime() const
   {
     static ros::Duration default_duration(0);
     return default_duration;
   }
 };
-typedef std::shared_ptr<InterpolationTrajectory> InterpolationTrajectoryPtr;
-typedef std::shared_ptr<InterpolationTrajectory const > InterpolationTrajectoryConstPtr;
+typedef std::shared_ptr<InterpolatorTrajectory> InterpolatorTrajectoryPtr;
+typedef std::shared_ptr<InterpolatorTrajectory const > InterpolatorTrajectoryConstPtr;
 
 /**
  * @brief The JointTrajectory struct
  */
-struct JointTrajectory : public InterpolationTrajectory
+struct JointTrajectory : public InterpolatorTrajectory
 {
   JointTrajectory() { trj.reset(new trajectory_msgs::JointTrajectory()); }
   virtual ~JointTrajectory() = default;
@@ -57,11 +57,11 @@ struct JointTrajectory : public InterpolationTrajectory
     return trj ? trj->points.size() == 0 : false;
   }
 
-  virtual bool append(InterpolationPointConstPtr point)
+  virtual bool append(InterpolatorPointConstPtr point)
   {
     if(trj && point)
     {
-      JointPointConstPtr pnt = std::dynamic_pointer_cast< JointPoint const >(point);
+      JointInterpolatorPointConstPtr pnt = std::dynamic_pointer_cast<JointInterpolatorPoint const>(point);
       trj->points.push_back(pnt->pnt);
     }
     return isEmpty();
@@ -69,7 +69,7 @@ struct JointTrajectory : public InterpolationTrajectory
 
   virtual const ros::Duration& trjTime() const
   {
-    return trj ? trj->points.back().time_from_start : InterpolationTrajectory::trjTime();
+    return trj ? trj->points.back().time_from_start : InterpolatorTrajectory::trjTime();
   }
 
   trajectory_msgs::JointTrajectoryPtr trj;
@@ -84,7 +84,7 @@ typedef std::shared_ptr<JointTrajectory const > JointTrajectoryConstPtr;
 /**
  * @brief The CartesianTrajectory struct
  */
-struct CartesianTrajectory : public InterpolationTrajectory
+struct CartesianTrajectory : public InterpolatorTrajectory
 {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -96,11 +96,11 @@ struct CartesianTrajectory : public InterpolationTrajectory
   CartesianTrajectory& operator=(CartesianTrajectory&&) = delete;
 
   virtual bool isEmpty() const { return trj.size() > 0; }
-  virtual bool append( InterpolationPointConstPtr point)
+  virtual bool append( InterpolatorPointConstPtr point)
   {
     if(point)
     {
-      CartesianPointConstPtr pnt = std::dynamic_pointer_cast< CartesianPoint const >(point);
+      CartesianInterpolatorPointConstPtr pnt = std::dynamic_pointer_cast<CartesianInterpolatorPoint const>(point);
       trj.push_back( *pnt );
     }
     return isEmpty();
@@ -108,10 +108,10 @@ struct CartesianTrajectory : public InterpolationTrajectory
 
   virtual const ros::Duration& trjTime() const
   {
-    return trj.size()>0 ? trj.back().time_from_start : InterpolationTrajectory::trjTime();
+    return trj.size()>0 ? trj.back().time_from_start : InterpolatorTrajectory::trjTime();
   }
 
-  std::vector< CartesianPoint > trj;
+  std::vector<CartesianInterpolatorPoint> trj;
 };
 typedef std::shared_ptr<CartesianTrajectory> CartesianTrajectoryPtr;
 typedef std::shared_ptr<CartesianTrajectory const > CartesianTrajectoryConstPtr;

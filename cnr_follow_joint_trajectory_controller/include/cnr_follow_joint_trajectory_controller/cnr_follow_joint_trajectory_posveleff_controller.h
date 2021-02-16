@@ -44,9 +44,8 @@ namespace cnr
 namespace control
 {
 
-template<int N, int MaxN=N>
-class FollowJointTrajectoryPosVelEffControllerN : public FollowJointTrajectoryController<N,MaxN,
-                            hardware_interface::PosVelEffJointHandle, hardware_interface::PosVelEffJointInterface>
+class FollowJointTrajectoryPosVelEffController : public
+  FollowJointTrajectoryController<hardware_interface::PosVelEffJointHandle, hardware_interface::PosVelEffJointInterface>
 {
 public:
 
@@ -54,18 +53,11 @@ public:
   {
     CNR_TRACE_START(this->logger());
     this->setPriority(this->QD_PRIORITY);
-    bool ret = FollowJointTrajectoryController<N,MaxN,
-                  hardware_interface::PosVelEffJointHandle, hardware_interface::PosVelEffJointInterface>::doInit();
+    bool ret = FollowJointTrajectoryController<hardware_interface::PosVelEffJointHandle, hardware_interface::PosVelEffJointInterface>::doInit();
     CNR_RETURN_BOOL(this->logger(), ret);
   }
 };
 
-
-using FollowJointTrajectoryPosVelEffController  = FollowJointTrajectoryPosVelEffControllerN<-1, cnr::control::max_num_axes>;
-using FollowJointTrajectoryPosVelEffController1 = FollowJointTrajectoryPosVelEffControllerN<1>;
-using FollowJointTrajectoryPosVelEffController3 = FollowJointTrajectoryPosVelEffControllerN<3>;
-using FollowJointTrajectoryPosVelEffController6 = FollowJointTrajectoryPosVelEffControllerN<6>;
-using FollowJointTrajectoryPosVelEffController7 = FollowJointTrajectoryPosVelEffControllerN<7>;
 
 }  // namespace control
 }  // namespace cnr
