@@ -51,7 +51,7 @@ std::shared_ptr<ros::NodeHandle> robot_nh;
 std::shared_ptr<ros::NodeHandle> reg_nh;
 std::shared_ptr<cnr_hardware_interface::FakeRobotHW> robot_hw;
 std::shared_ptr<cnr::control::BaseCartesianRegulator> reg;
-std::shared_ptr<cnr::control::BaseCartesianRegulator6 > reg_6;
+std::shared_ptr<cnr::control::BaseCartesianRegulator> reg_6;
 
 cnr::control::CartesianRegulatorParamsPtr opts;
 
@@ -111,7 +111,7 @@ TEST(TestSuite, Constructor)
 
 TEST(TestSuite, JC6Constructor)
 {
-  EXPECT_NO_FATAL_FAILURE(reg_6.reset(new cnr::control::BaseCartesianRegulator6()));
+  EXPECT_NO_FATAL_FAILURE(reg_6.reset(new cnr::control::BaseCartesianRegulator()));
   EXPECT_TRUE(reg_6->initialize(*robot_nh, *reg_nh, opts));
 }
 

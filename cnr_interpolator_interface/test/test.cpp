@@ -52,7 +52,7 @@ std::shared_ptr<cnr::control::JointInterpolatorInterface> joint_interp;
 std::shared_ptr<cnr::control::CartesianInterpolatorInterface> cart_interp;
 
 cnr::control::CartesianTrajectoryPtr trj;
-cnr::control::CartesianPointPtr pnt;
+cnr::control::CartesianInterpolatorPointPtr pnt;
 
 // Declare a test
 TEST(TestSuite, loggerInit)
@@ -92,7 +92,7 @@ TEST(TestSuite, chainInit)
 TEST(TestSuite, params)
 {
   EXPECT_NO_FATAL_FAILURE(trj.reset(new cnr::control::CartesianTrajectory() ));
-  EXPECT_NO_FATAL_FAILURE(pnt.reset(new cnr::control::CartesianPoint()) );
+  EXPECT_NO_FATAL_FAILURE(pnt.reset(new cnr::control::CartesianInterpolatorPoint()) );
   pnt->time_from_start = ros::Duration(0.0);
   pnt->twist  = Eigen::Vector6d::Zero();
   pnt->twistd = Eigen::Vector6d::Zero();

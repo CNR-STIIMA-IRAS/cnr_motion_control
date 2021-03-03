@@ -83,8 +83,15 @@ install(DIRECTORY include/${PROJECT_NAME}/
 
 if(CATKIN_ENABLE_TESTING)
   find_package(rostest REQUIRED)
+  find_package(cnr_fake_hardware_interface REQUIRED)
+  find_package(cnr_regulator_interface REQUIRED)
+
   add_rostest_gtest(${PROJECT_NAME}_test test/test.launch test/test.cpp)
-  target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${rostest_LIBRARIES} )
+  target_include_directories(${PROJECT_NAME}_test PUBLIC
+                                ${cnr_regulator_interface_INCLUDE_DIRS} ${cnr_fake_hardware_interface_INCLUDE_DIRS})
+  target_link_libraries(${PROJECT_NAME}_test
+                            ${catkin_LIBRARIES} ${cnr_fake_hardware_interface_LIBRARIES}
+                              ${cnr_regulator_interface_LIBRARIES} ${rostest_LIBRARIES} )
   target_compile_options(${PROJECT_NAME}_test PUBLIC $<$<CONFIG:Release>:-Ofast -funroll-loops -ffast-math >)
   if(ENABLE_COVERAGE_TESTING)
     set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")
