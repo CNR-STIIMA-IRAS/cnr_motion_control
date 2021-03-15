@@ -47,11 +47,6 @@ FollowJointTrajectoryController<H,T>::FollowJointTrajectoryController()
   m_is_in_tolerance = false;
   m_preempted = false;
   m_interpolator.reset();
-
-  //----------- NP -----------
-  m_scaled_time_pub_idx = this->template add_publisher<std_msgs::Float64>("scaled_time_pub", 1);
-  m_target_pub_idx      = this->template add_publisher<sensor_msgs::JointState>("/target/joint_states", 1);
-  //--------------------------
 }
 
 template<class H, class T>
@@ -118,13 +113,10 @@ bool FollowJointTrajectoryController<H,T>::doInit()
   eu::setConstant(goal_tolerance, 0.001);
   if(!rosparam_utilities::getParam(this->getControllerNh(), "goal_tolerance", goal_tolerance, what, &goal_tolerance))
   {
-    double _goal_tolerance = 0.001;
-    if(!rosparam_utilities::getParam(this->getControllerNh(), "goal_tolerance", _goal_tolerance, what, &_goal_tolerance))
-    {
-      CNR_WARN(this->logger(), "goal tolerance not in rosparam server. Superimposed to 0.001");
-    }
-    eu::setConstant(goal_tolerance, _goal_tolerance);
+    CNR_ERROR(this->logger(), "Error in getting the goal tolerance: " << what);
+    CNR_RETURN_FALSE(this->logger());
   }
+  CNR_WARN_COND(this->logger(), what.size()>0, what);
   eu::copy(m_r->goal_tolerance, goal_tolerance);
   // ^^^^^^
 
@@ -132,13 +124,10 @@ bool FollowJointTrajectoryController<H,T>::doInit()
   eu::setConstant(path_tolerance, 0.001);
   if(!rosparam_utilities::getParam(this->getControllerNh(), "path_tolerance", path_tolerance, what, &path_tolerance))
   {
-    double _path_tolerance = 0.001;
-    if(!rosparam_utilities::getParam(this->getControllerNh(), "path_tolerance", _path_tolerance, what, &_path_tolerance))
-    {
-      CNR_WARN(this->logger(), "goal tolerance not in rosparam server. Superimposed to 0.001");
-    }
-    eu::setConstant(path_tolerance, _path_tolerance);
+    CNR_ERROR(this->logger(), "Error in getting the path tolerance: " << what);
+    CNR_RETURN_FALSE(this->logger());
   }
+  CNR_WARN_COND(this->logger(), what.size()>0, what);
   eu::copy(m_r->path_tolerance, path_tolerance);
 
   m_as.reset(new actionlib::ActionServer<control_msgs::FollowJointTrajectoryAction>(
@@ -184,7 +173,7 @@ bool FollowJointTrajectoryController<H,T>::doUpdate(const ros::Time& time, const
   {
     m_r->target_override = this->getTargetOverride();
     m_r->period = period;
-    m_regulator->update(m_r, m_u);
+    m_regulator->update(m_r, m_u);  // the regulator call the interpolator!
 
     m_is_in_tolerance = m_u->in_goal_tolerance;
 
@@ -192,25 +181,6 @@ bool FollowJointTrajectoryController<H,T>::doUpdate(const ros::Time& time, const
     this->setCommandVelocity     (m_u->xd);
     this->setCommandAcceleration (m_u->xdd);
     this->setCommandEffort       (m_u->eff);
-
-    std_msgs::Float64Ptr msg(new std_msgs::Float64());
-    msg->data = m_u->scaling;
-    this->publish(m_scaled_time_pub_idx, msg);
-
-    m_is_in_tolerance = m_u->in_goal_tolerance;
-
-    sensor_msgs::JointStatePtr js_msg(new sensor_msgs::JointState());
-    js_msg->name = this->jointNames();
-    js_msg->position.resize(this->nAx());
-    js_msg->velocity.resize(this->nAx());
-    js_msg->effort.resize(this->nAx(), 0);
-
-    Eigen::VectorXd::Map(&js_msg->position[0], this->nAx()) = m_u->x;
-    Eigen::VectorXd::Map(&js_msg->velocity[0], this->nAx()) = m_u->xd;
-    Eigen::VectorXd::Map(&js_msg->effort  [0], this->nAx()) = m_u->eff;
-    js_msg->header.stamp  = ros::Time::now();
-    this->publish(m_target_pub_idx, js_msg);
-
   }
   catch (std::exception& e)
   {
