@@ -89,17 +89,17 @@ bool FollowJointTrajectoryController<H,T>::doInit()
     opts->logger    = this->logger();
     opts->period    = ros::Duration(this->m_sampling_period);
     opts->dim       = this->nAx();
-    opts->resources_names = this->m_chain.getActiveJointsName();
+    opts->resources_names = this->chain().getActiveJointsName();
     opts->interpolator = m_interpolator;
     if(!m_regulator->initialize(this->getRootNh(), this->getControllerNh(), opts))
     {
       CNR_RETURN_FALSE(this->logger(), "The regulator init failed. Abort.")
     }
     m_r.reset(new JointRegulatorReference());
-    m_r->set_dimension(this->m_chain.getActiveJointsNumber());
+    m_r->set_dimension(this->chain().getActiveJointsNumber());
 
     m_u.reset(new JointRegulatorControlCommand());
-    m_u->set_dimension(this->m_chain.getActiveJointsNumber());
+    m_u->set_dimension(this->chain().getActiveJointsNumber());
 
   }
   catch(pluginlib::PluginlibException& ex)
