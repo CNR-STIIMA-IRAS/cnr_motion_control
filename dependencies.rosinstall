@@ -1,0 +1,6 @@
+- git:
+    local-name: cnr_ros_control
+    uri: https://github.com/CNR-STIIMA-IRAS/cnr_ros_control
+- git:
+    local-name: cnr_ros_regulatos
+    uri: https://github.com/CNR-STIIMA-IRAS/cnr_ros_regulators
