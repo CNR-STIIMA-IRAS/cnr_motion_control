@@ -29,15 +29,18 @@
   <author email="nicola.pedrocchi@stiima.cnr.it">Nicola Pedrocchi</author>
 
   <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>cnr_regulator_interface</build_depend>
   <build_depend>cnr_interpolator_interface</build_depend>
   <build_depend>cnr_logger</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>rosdyn_core</build_depend>
+  <build_export_depend>cnr_regulator_interface</build_export_depend>
   <build_export_depend>cnr_interpolator_interface</build_export_depend>
   <build_export_depend>cnr_logger</build_export_depend>
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>rosdyn_core</build_export_depend>
   <exec_depend>cnr_interpolator_interface</exec_depend>
+  <exec_depend>cnr_regulator_interface</exec_depend>
   <exec_depend>cnr_logger</exec_depend>
   <exec_depend>roscpp</exec_depend>
   <exec_depend>rosdyn_core</exec_depend>
