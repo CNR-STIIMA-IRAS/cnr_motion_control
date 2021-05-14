@@ -201,10 +201,11 @@ bool ThorPrefilter::interpolate(InterpolatorInputConstPtr input,
           out()->pnt.positions.at(iAx)     = c1 + c2 * t + c3 * (t * t) + c4 * (t * t * t) + c5 * (t * t * t * t) + c6 * (t * t * t * t * t) + c7 * (t * t * t * t * t * t) + c8 * (t * t * t * t * t * t * t) + c9 * (t * t * t * t * t * t * t * t) + c10 * (t * t * t * t * t * t * t * t * t);
           out()->pnt.velocities.at(iAx)    = c2 + c3 * t * 2.0 + c4 * (t * t) * 3.0 + c5 * (t * t * t) * 4.0 + c6 * (t * t * t * t) * 5.0 + c7 * (t * t * t * t * t) * 6.0 + c8 * (t * t * t * t * t * t) * 7.0 + c9 * (t * t * t * t * t * t * t) * 8.0 + c10 * (t * t * t * t * t * t * t * t) * 9.0;
           out()->pnt.accelerations.at(iAx) = c3 * 2.0 + c4 * t * 6.0 + c5 * (t * t) * 1.2E1 + c6 * (t * t * t) * 2.0E1 + c7 * (t * t * t * t) * 3.0E1 + c8 * (t * t * t * t * t) * 4.2E1 + c9 * (t * t * t * t * t * t) * 5.6E1 + c10 * (t * t * t * t * t * t * t) * 7.2E1;
-
-          out()->pnt.velocities.at(iAx)    *= in()->override();
-          out()->pnt.accelerations.at(iAx) *= in()->override() * in()->override();
         }
+
+        out()->pnt.velocities.at(iAx)    *= in()->override();
+        out()->pnt.accelerations.at(iAx) *= in()->override() * in()->override();
+
       }
       m_last_interpolated_point->pnt = out()->pnt;
 
