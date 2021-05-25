@@ -205,7 +205,7 @@ bool ThorPrefilter::interpolate(InterpolatorInputConstPtr input,
 
         out()->pnt.velocities.at(iAx)    *= in()->override();
         out()->pnt.accelerations.at(iAx) *= in()->override() * in()->override();
-        
+
       }
       m_last_interpolated_point->pnt = out()->pnt;
 
