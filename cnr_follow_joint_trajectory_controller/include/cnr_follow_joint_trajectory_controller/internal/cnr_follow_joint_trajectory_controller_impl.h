@@ -173,9 +173,14 @@ bool FollowJointTrajectoryController<H,T>::doUpdate(const ros::Time& time, const
   {
     m_r->target_override = this->getTargetOverride();
     m_r->period = period;
+    
+    //CNR_DEBUG_THROTTLE(this->logger(),  1, "ovr: " << m_r->target_override << " period: " << m_r->period);
     m_regulator->update(m_r, m_u);  // the regulator call the interpolator!
 
     m_is_in_tolerance = m_u->in_goal_tolerance;
+    //CNR_DEBUG_THROTTLE(this->logger(), 1,  "is in tolerance? " << m_is_in_tolerance);
+    
+    //CNR_DEBUG_THROTTLE(this->logger(), 1, "u: " << eu::to_string(m_u->x));
 
     this->setCommandPosition     (m_u->x);
     this->setCommandVelocity     (m_u->xd);
@@ -318,7 +323,8 @@ void FollowJointTrajectoryController<H,T>::actionGoalCallback(
     m_gh.reset();
     return;
   }
-
+  CNR_DEBUG(this->logger(),"Trajectory composed of " << nPnt << " points");
+  CNR_DEBUG(this->logger(),"Sort the names");
   JointTrajectoryPtr interp_trj(new JointTrajectory());
   if (!trajectory_processing::sort_trajectory(this->jointNames(), goal->trajectory, *interp_trj->trj))
   {
@@ -327,6 +333,7 @@ void FollowJointTrajectoryController<H,T>::actionGoalCallback(
     joinActionServerThread();
     return;
   }
+  CNR_DEBUG(this->logger(),"[Check] Trajectory composed of " << nPnt << " points");
 
   try
   {
@@ -334,19 +341,25 @@ void FollowJointTrajectoryController<H,T>::actionGoalCallback(
     m_interpolator->setTrajectory(interp_trj);
     m_regulator->starting(m_x0, ros::Time::now());
     CNR_DEBUG(this->logger(), "Starting managing new goal");
-    std::stringstream ss1;
-    ss1 << "[ ";
-    for(const auto & q : interp_trj->trj->points.front().positions)
+    
+    auto str = [](const std::vector<double>& q) -> std::string
     {
-      ss1 << std::to_string(q) << " "; ss1 << "]";
-    }
-    std::stringstream ss2;
-    ss2 << "[ ";
-    for(const auto & qd : interp_trj->trj->points.front().velocities)
-    {
-      ss2 << std::to_string(qd) << " ";  ss2 << "]";
-    }
-    CNR_DEBUG(this->logger(), "First Point of the trajectory:\n q : " + ss1.str() + "\n" + " qd:" + ss2.str());
+      std::string ret = "[ ";
+      for(size_t i=0;i<q.size()-1;i++)
+      {
+        ret += std::to_string(q[i]) + ", "; 
+      }     
+      return ret + std::to_string(q.back()) + "]";;
+    };
+
+    CNR_DEBUG(this->logger(), "First Point of the trajectory:\n q : " <<
+                str(interp_trj->trj->points.front().positions) << "\n" << " qd:" 
+                  << str(interp_trj->trj->points.front().velocities) );
+    
+    CNR_DEBUG(this->logger(), "Last Point of the trajectory:\n q : " <<
+                str(interp_trj->trj->points.back().positions) << "\n" << " qd:" 
+                  << str(interp_trj->trj->points.back().velocities) );
+
     m_is_finished=0;
   }
   catch(std::exception& e)
