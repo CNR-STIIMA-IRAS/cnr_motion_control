@@ -22,7 +22,7 @@
 #include <cnr_regulator_interface/cnr_regulator_references.h>
 #include <cnr_regulator_interface/cnr_regulator_feedback.h>
 #include <cnr_regulator_interface/cnr_regulator_control_commands.h>
-
+#include <rosparam_utilities/rosparam_utilities.h>
 namespace eu = eigen_utils;
 
 namespace cnr
@@ -84,7 +84,7 @@ bool FollowJointTrajectoryController<H,T>::doInit()
   {
     auto reg = m_regulator_loader.createInstance(regulator);
     m_regulator = cnr::control::to_std_ptr(reg);
-    
+
     JointRegulatorParamsPtr opts(new JointRegulatorParams());
     opts->logger    = this->logger();
     opts->period    = ros::Duration(this->m_sampling_period);
@@ -154,10 +154,10 @@ bool FollowJointTrajectoryController<H,T>::doStarting(const ros::Time& /*time*/)
 
   JointTrajectoryPtr trj(new JointTrajectory({pnt}));
   m_interpolator->setTrajectory(trj);
-  
+
   m_x0.reset(new JointRegulatorState());
   m_x0->robotState().copy(this->chainState(),this->chainState().FULL_STATE);
-  
+
   m_regulator->starting(m_x0, ros::Time::now());
   m_r->target_override = 1.0;
 
@@ -173,13 +173,13 @@ bool FollowJointTrajectoryController<H,T>::doUpdate(const ros::Time& time, const
   {
     m_r->target_override = this->getTargetOverride();
     m_r->period = period;
-    
+
     //CNR_DEBUG_THROTTLE(this->logger(),  1, "ovr: " << m_r->target_override << " period: " << m_r->period);
     m_regulator->update(m_r, m_u);  // the regulator call the interpolator!
 
     m_is_in_tolerance = m_u->in_goal_tolerance;
     //CNR_DEBUG_THROTTLE(this->logger(), 1,  "is in tolerance? " << m_is_in_tolerance);
-    
+
     //CNR_DEBUG_THROTTLE(this->logger(), 1, "u: " << eu::to_string(m_u->x));
 
     this->setCommandPosition     (m_u->x);
@@ -236,8 +236,8 @@ void FollowJointTrajectoryController<H,T>::actionServerThread()
       break;
     }
 
-    if ((m_preempted) 
-    || (m_gh->getGoalStatus().status == actionlib_msgs::GoalStatus::RECALLED) 
+    if ((m_preempted)
+    || (m_gh->getGoalStatus().status == actionlib_msgs::GoalStatus::RECALLED)
     || (m_gh->getGoalStatus().status == actionlib_msgs::GoalStatus::PREEMPTED))
     {
       CNR_WARN(this->logger(), "Action Server Thread Preempted");
@@ -341,23 +341,23 @@ void FollowJointTrajectoryController<H,T>::actionGoalCallback(
     m_interpolator->setTrajectory(interp_trj);
     m_regulator->starting(m_x0, ros::Time::now());
     CNR_DEBUG(this->logger(), "Starting managing new goal");
-    
+
     auto str = [](const std::vector<double>& q) -> std::string
     {
       std::string ret = "[ ";
       for(size_t i=0;i<q.size()-1;i++)
       {
-        ret += std::to_string(q[i]) + ", "; 
-      }     
+        ret += std::to_string(q[i]) + ", ";
+      }
       return ret + std::to_string(q.back()) + "]";;
     };
 
     CNR_DEBUG(this->logger(), "First Point of the trajectory:\n q : " <<
-                str(interp_trj->trj->points.front().positions) << "\n" << " qd:" 
+                str(interp_trj->trj->points.front().positions) << "\n" << " qd:"
                   << str(interp_trj->trj->points.front().velocities) );
-    
+
     CNR_DEBUG(this->logger(), "Last Point of the trajectory:\n q : " <<
-                str(interp_trj->trj->points.back().positions) << "\n" << " qd:" 
+                str(interp_trj->trj->points.back().positions) << "\n" << " qd:"
                   << str(interp_trj->trj->points.back().velocities) );
 
     m_is_finished=0;
