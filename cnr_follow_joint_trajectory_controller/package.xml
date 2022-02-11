@@ -26,6 +26,7 @@
   <build_depend>pluginlib</build_depend>
   <build_depend>cnr_interpolator_interface</build_depend>
   <build_depend>cnr_regulator_interface</build_depend>
+  <build_depend>rosparam_utilities</build_depend>
 
   <build_export_depend>actionlib</build_export_depend>
   <build_export_depend>controller_interface</build_export_depend>
@@ -39,6 +40,7 @@
   <build_export_depend>pluginlib</build_export_depend>
   <build_export_depend>cnr_interpolator_interface</build_export_depend>
   <build_export_depend>cnr_regulator_interface</build_export_depend>
+  <build_export_depend>rosparam_utilities</build_export_depend>
 
   <exec_depend>actionlib</exec_depend>
   <exec_depend>controller_interface</exec_depend>
@@ -52,6 +54,7 @@
   <exec_depend>pluginlib</exec_depend>
   <exec_depend>cnr_interpolator_interface</exec_depend>
   <exec_depend>cnr_regulator_interface</exec_depend>
+  <exec_depend>rosparam_utilities</exec_depend>
 
   <export>
     <controller_interface plugin="${prefix}/plugins.xml"/>
